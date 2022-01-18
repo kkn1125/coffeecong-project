@@ -1,4 +1,4 @@
-package com.coffeecongspring.web;
+package com.coffeecongspring.web.controller;
 
 import java.text.DateFormat;
 import java.util.Date;
