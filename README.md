@@ -21,6 +21,7 @@ Java JSP 1개월 반 과정의 학원을 이수하고 마지막 2주 가량 남�
 - servlet-api 3.1.0
 - spring-jdbc 5.3.6
 - mybatis-spring 2.0.6
+- mybatis 3.5.7
 - tiles-jsp 3.0.8
 - lombok 1.18.22
 - jackson-databind 2.13.1
@@ -33,8 +34,7 @@ Java JSP 1개월 반 과정의 학원을 이수하고 마지막 2주 가량 남�
 
 ## 개발 범위
 
-- 게시판 CRUD (계층형)
-- 댓글 (계층형)
+- 댓글 (리뷰 계층형)
 - Rest API
 - 로그인/회원가입(구글 oAuth, naver Auth)
 - 상품리스트(몰) 페이지
