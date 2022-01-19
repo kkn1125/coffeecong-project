@@ -15,7 +15,7 @@ public class MemberProvider {
 			sql += " address_main=#{address_main}";
 		} else if(member.getAddress_sub()!=null) {
 			sql += " address_sub=#{address_sub}";
-		} else if(member.getAddress_zip()!=null) {
+		} else if(member.getAddress_zip()>0) {
 			sql += " address_zip=#{address_zip}";
 		} else if(member.getBirth()!=null) {
 			sql += " birth=#{birth}";

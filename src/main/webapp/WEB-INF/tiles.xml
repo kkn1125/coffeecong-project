@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+  <definition name="baseLayer" template="/WEB-INF/views/inc/layout.jsp">
+    <put-attribute name="title" value="Kimson Home" />
+  </definition>
+
+  <definition name="root.*" extends="baseLayer">
+    <put-attribute name="body" value="/WEB-INF/views/{1}.jsp" />
+  </definition>
+
+</tiles-definitions>

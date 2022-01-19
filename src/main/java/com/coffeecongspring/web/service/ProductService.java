@@ -1,6 +1,7 @@
 package com.coffeecongspring.web.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,11 @@ public class ProductService{
 		return productMapper.findAll();
 	}
 
-	public List<Product> findByNum(int num) {
+	public Optional<Product> findByNum(int num) {
 		return productMapper.findByNum(num);
 	}
 
-	public List<Product> findByPid(String pid) {
+	public Optional<Product> findByPid(String pid) {
 		return productMapper.findByPid(pid);
 	}
 

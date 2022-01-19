@@ -152,3 +152,5 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 
 show tables;
+
+select * from member;

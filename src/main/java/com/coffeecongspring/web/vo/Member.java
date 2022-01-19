@@ -12,7 +12,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Member {
+public class Member{
 	private int num;
 	private String id;
 	private String email;
@@ -21,7 +21,7 @@ public class Member {
 	private Date birth;
 	private String address_main;
 	private String address_sub;
-	private String address_zip;
+	private long address_zip;
 	private Timestamp regdate;
 	private Timestamp updates;
 }
