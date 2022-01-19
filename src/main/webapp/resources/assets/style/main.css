@@ -1,1 +1,138 @@
 @charset "UTF-8";
+
+:root {
+    --pl-brand: #59ffc5;
+    --pl-primary: #737d1e;
+    --pl-secondary: #a9b252;
+    --pl-subpoint: #e2e986;
+    --pl-point: #ff9b6c;
+    --pl-brand-r: 89;
+    --pl-primary-r: 115;
+    --pl-secondary-r: 169;
+    --pl-subpoint-r: 226;
+    --pl-point-r: 255;
+    --pl-brand-g: 255;
+    --pl-primary-g: 125;
+    --pl-secondary-g: 178;
+    --pl-subpoint-g: 233;
+    --pl-point-g: 155;
+    --pl-brand-b: 197;
+    --pl-primary-b: 30;
+    --pl-secondary-b: 82;
+    --pl-subpoint-b: 134;
+    --pl-point-b: 108;
+}
+
+body {
+    display: block;
+    flex-direction: unset;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* main */
+
+.cc {
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    min-height: 500px;
+}
+
+.cc-cover {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -100;
+}
+
+.cc-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.ccbackground-overlay {
+    background-color: rgba(0, 0, 0, .25);
+    animation: cc-reveal 1s both;
+    -webkit-animation: cc-reveal 1s both;
+}
+
+.cc-foreground {
+    background-image: linear-gradient(90deg, rgba(0, 0, 0, .5) 0, rgba(0, 0, 0, 0) 100%);
+    transition: all .75s ease-in-out;
+    transition-delay: .25s;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 10;
+    animation: cc-reveal 2s both;
+    -webkit-animation: cc-reveal 2s both;
+}
+
+.cc-forestring {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 5rem;
+    gap: 0.5rem;
+}
+
+.greeting {
+    position: relative;
+    color: white;
+    min-width: 20rem;
+    width: calc(100% * 1.8 - 100vw);
+    max-width: 36rem;
+    animation: cc-reveal 1s both, cc-overlay 1s both;
+    -webkit-animation: cc-reveal 1s both, cc-overlay 1s both;
+}
+
+.greeting-title {
+    font-weight: bold;
+    font-size: 3rem
+}
+
+@keyframes cc-overlay {
+    0% {
+        transform: translateY(-10%);
+        -webkit-transform: translateY(-10%);
+        -moz-transform: translateY(-10%);
+        -ms-transform: translateY(-10%);
+        -o-transform: translateY(-10%);
+}
+
+    100% {
+        transform: translateY(0%);
+        -webkit-transform: translateY(0%);
+        -moz-transform: translateY(0%);
+        -ms-transform: translateY(0%);
+        -o-transform: translateY(0%);
+    }
+}
+
+@keyframes cc-reveal {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+/* main */

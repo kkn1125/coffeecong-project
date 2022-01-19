@@ -13,4 +13,24 @@ public class HomeController {
 		return "root.home";
 	}
 	
+	@GetMapping("mall")
+	public String notice() {
+		return "root.mall";
+	}
+	
+	@GetMapping("signin")
+	public String signin() {
+		return "root.signin";
+	}
+	
+	@GetMapping("signup")
+	public String signup() {
+		return "root.signup";
+	}
+	
+	@GetMapping("about")
+	public String about() {
+		return "root.about";
+	}
+	
 }
