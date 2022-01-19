@@ -146,10 +146,35 @@ CREATE TABLE IF NOT EXISTS `coffeespring`.`like` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `coffeespring`.`cart`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `coffeespring`.`cart` (
+  `num` INT NOT NULL,
+  `mnum` INT NOT NULL,
+  `pnum` INT NOT NULL,
+  `id` VARCHAR(300) NULL,
+  `capacity` INT NOT NULL,
+  `regdate` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX `fk_table1_member2_idx` (`mnum` ASC) VISIBLE,
+  INDEX `fk_table1_product2_idx` (`pnum` ASC) VISIBLE,
+  PRIMARY KEY (`num`),
+  CONSTRAINT `fk_table1_member2`
+    FOREIGN KEY (`mnum`)
+    REFERENCES `coffeespring`.`member` (`num`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_table1_product2`
+    FOREIGN KEY (`pnum`)
+    REFERENCES `coffeespring`.`product` (`num`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
 
 show tables;
 
