@@ -146,4 +146,4 @@ Java JSP 1개월 반 과정의 학원을 이수하고 마지막 2주 가량 남�
 
 ## 포트폴리오 샘플
 
-... 작성 중
+[CoffeeCong Sample Page](https://coffeecong.herokuapp.com){:target="_blank"}
