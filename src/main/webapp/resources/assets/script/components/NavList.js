@@ -19,8 +19,11 @@ export default {
             <a class="nav-link" :href="'/'+getLowerCase(item)">{{getCapitalize(item)}}</a>
         </li>
         <li class="search btn-bundle g-0">
-            <input type="text" class="form-input col">
-            <button class="btn btn-info">
+            <input
+            type="text"
+            class="form-input col"
+            placeholder="검색어를 입력해주세요">
+            <button class="btn btn-point">
                 <ion-icon name="search-outline"></ion-icon>
             </button>
         </li>

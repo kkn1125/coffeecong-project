@@ -1,4 +1,4 @@
-import MenuWrap from './MenuWrap.js';
+import NavWrap from './NavWrap.js';
 
 export default {
     props: ['brand'],
@@ -8,19 +8,19 @@ export default {
                 'gnb', 'position-sticky', 'bg-primary', 'us-none'
             ],
             menulist: [
-                'home', 'mall', 'sign-in', 'sign-up'
+                'home', 'mall', 'sign-in', 'sign-up', 'about'
             ],
         }
     },
     template: `
         <nav :class="navClass">
             <component
-            is="menuWrap"
+            is="navWrap"
             :brand="brand"
             :menus="menulist"></component>
         </nav>
     `,
     components: {
-        MenuWrap,
+        NavWrap,
     }
 }

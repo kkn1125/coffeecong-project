@@ -52,9 +52,9 @@ export default {
                     <div class="greeting-title">
                         CoffeeCong is defference.
                     </div>
-                    <div class="btns">
-                        <button class="btn btn-point">온라인 몰</button>
-                        <button class="btn btn-frame-point">주문 조회</button>
+                    <div class="w-flex vgap-3">
+                        <button class="btn btn-point rounded-0 px-4 py-2">온라인 몰</button>
+                        <button class="btn btn-frame-point rounded-0 px-4 py-2">주문 조회</button>
                     </div>
                 </div>
             </div>
