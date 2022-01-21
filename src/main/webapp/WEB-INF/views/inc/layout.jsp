@@ -5,9 +5,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kkn1125/penli@dabfbd0/docs/assets/css/penli.css" integrity="sha384-GRlAVG2hpmCsp6fahietb2fYclf6GcPQ//SP/cbgU5fXb/XnuNXgcBtiDnxsfWZn" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/kkn1125/penli@dabfbd0/docs/assets/css/penli.theme.css" integrity="sha384-01r009YpiICsv6vC6VOYlFkAXL3fvSbJWvj4y6IFDQ5ydtcsROidPN6OZ4pHTz8m" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <link rel="stylesheet" href="/resources/assets/style/main.css">
 <title><tiles:insertAttribute name="title" /></title>
 </head>

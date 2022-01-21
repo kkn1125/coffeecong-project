@@ -5,11 +5,11 @@
 
 import * as Modules from './Modules.js';
 
-import AppNav from './components/AppNav.js';
-import AppMain from './components/AppMain.js';
-import AppMainBody from './components/AppMainBody.js';
-import AppFooter from './components/AppFooter.js';
-import AppParts from './components/AppParts.js';
+import AppNav from './components/apps/AppNav.js';
+import AppMain from './components/apps/AppMain.js';
+import AppMainBody from './components/apps/AppMainBody.js';
+import AppFooter from './components/apps/AppFooter.js';
+import AppParts from './components/apps/AppParts.js';
 
 Vue.config.ignoredElements = [/^ion-/];
 

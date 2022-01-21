@@ -1,3 +1,4 @@
+@charset "UTF-8";
 ion-icon {
   pointer-events: none;
 }
@@ -25,6 +26,61 @@ ion-icon {
   --pl-point-b: 108;
 }
 
+.error {
+  color: rgb(var(--pl-danger-r), var(--pl-danger-g), var(--pl-danger-b));
+  text-align: center;
+  font-size: 85%;
+}
+
+.breadcrumb {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.form-signup {
+  position: relative;
+}
+.form-signup .signup {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  -o-transform: translateX(-50%) translateY(-50%);
+  transition: left 500ms ease, opacity 300ms ease;
+  -webkit-transition: left 500ms ease, opacity 300ms ease;
+  -moz-transition: left 500ms ease, opacity 300ms ease;
+  -ms-transition: left 500ms ease, opacity 300ms ease;
+  -o-transition: left 500ms ease, opacity 300ms ease;
+}
+.form-signup .show {
+  opacity: 1;
+  pointer-events: revert;
+  left: 50%;
+}
+.form-signup .hide {
+  opacity: 0;
+  pointer-events: none;
+  left: -100%;
+}
+
+.cut {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  /* 라인수 */
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  line-height: 1rem;
+  max-height: 3rem;
+  /* line-height 가 1.2em 이고 3라인을 자르기 때문에 height는 1.2em * 3 = 3.6em */
+}
+
 body {
   display: block;
   flex-direction: unset;
@@ -41,6 +97,11 @@ img {
 }
 
 /* main */
+.card-group .card.hide {
+  animation: cc-hiding 300ms both;
+  -webkit-animation: cc-hiding 300ms both;
+}
+
 .card-wrap {
   position: relative;
   transition: 150ms;
@@ -236,6 +297,24 @@ img {
   }
   100% {
     opacity: 1;
+  }
+}
+@keyframes cc-hiding {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0);
+    -webkit-transform: scale(0);
+    -moz-transform: scale(0);
+    -ms-transform: scale(0);
+    -o-transform: scale(0);
   }
 }
 /* main */
