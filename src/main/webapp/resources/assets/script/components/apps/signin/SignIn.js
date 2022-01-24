@@ -76,7 +76,7 @@ export default{
     template: `
         <section class="fence-full fence-lg">
             <div
-            class="w-flex flex-column col-8 align-items-center mx-auto">
+            class="w-flex flex-column col-md-8 col-18 align-items-center mx-auto">
                 <div>
                     <span class="h3">Welcome!</span>
                 </div>

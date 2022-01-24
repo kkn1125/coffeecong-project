@@ -85,7 +85,8 @@ Java JSP 1개월 반 과정의 학원을 이수하고 마지막 2주 가량 남�
 |content|longtext||상품 설명|아라비아 커피의 고장이라고 불리우는 에티오피아. 그보다 더 유명한 커피가 에티오피아 예가체프로...||
 |capacity|bigint||총 수량|50||
 |price|bigint||가격|5000|view단에서 Comma처리|
-|category|varchar(45)||상품 분류|bean||
+|category|varchar(45)||상품 분류|bean|`bean`, `coffee`, `tea`, `machine`, `wear` 5가지|
+|image|text||상품 이미지|/resources/assets/images/...||
 |regdate|timestamp||상품 등록 일자||자동 등록
 |updates|timestamp||상품 수정 일자 (수정 시 변경)||자동 등록
 

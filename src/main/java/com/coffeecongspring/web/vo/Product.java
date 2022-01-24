@@ -21,6 +21,7 @@ public class Product {
 	private long capacity;
 	private long price;
 	private String category;
+	private String image;
 	private Timestamp regdate;
 	private Timestamp updates;
 }

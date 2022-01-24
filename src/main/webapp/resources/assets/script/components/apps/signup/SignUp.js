@@ -1,6 +1,7 @@
 export default {
     data() {
         return {
+            showPass: false,
             lazyText: 'button',
             current: 0,
             btnStyle: ['btn', {'btn-info': true}, 'btn-lg', 'px-2', 'rounded-0'],
@@ -39,18 +40,6 @@ export default {
                 },
                 {
                     id: 1,
-                    title: '개인정보를 입력해 주세요.',
-                    show: false,
-                    input: [
-                        {
-                            name: 'datetime',
-                            type: 'text',
-                            options: ''
-                        }, 
-                    ]
-                },
-                {
-                    id: 2,
                     title: '아이디와 패스워드를 입력해주세요',
                     show: false,
                     input: [
@@ -58,28 +47,53 @@ export default {
                             name: 'id',
                             type: 'text',
                             options: {
-                                autocomplete: 'username'
+                                autocomplete: 'username',
+                                placeholder: 'kimson1234',
+                            }
+                        },
+                        {
+                            name: 'email',
+                            type: 'email',
+                            options: {
+                                autocomplete: 'username',
+                                placeholder: 'kimson1234@naver.com',
                             }
                         },
                         {
                             name: 'password',
-                            type: 'text',
+                            type: 'password',
                             options: {
-                                autocomplete: 'current-password'
+                                autocomplete: 'current-password',
                             }
                         },
                     ]
                 },
                 {
-                    id: 3,
-                    title: '이름을 입력해 주세요',
+                    id: 2,
+                    title: '주소지를 입력해주세요',
                     show: false,
                     input: [
                         {
-                            name: '',
+                            name: 'address_main',
                             type: 'text',
-                            options: ''
-                        }, 
+                            options: {
+                                placeholder: '서울시 중랑구 ...'
+                            }
+                        },
+                        {
+                            name: 'address_sub',
+                            type: 'text',
+                            options: {
+                                placeholder: '402호'
+                            }
+                        },
+                        {
+                            name: 'address_zip',
+                            type: 'text',
+                            options: {
+                                placeholder: '12345'
+                            }
+                        },
                     ]
                 },
             ]
@@ -87,17 +101,60 @@ export default {
     },
     mounted() {
         document.querySelectorAll('input:not([type="checkbox"])').forEach(input=>{
-            input.addEventListener('invalid', this.checkFormValid.bind(this, input))
-            input.addEventListener('input', this.renderErrorBox.bind(this, input))
+            input.addEventListener('invalid', this.checkFormValid.bind(this, input));
+            input.addEventListener('input', this.renderErrorBox.bind(this, input));
+            if(input.name.match(/address_main|zip/gm)){
+                input.addEventListener('click', (ev)=>{
+                    if(ev.target.getAttribute('lock')==''){
+                        let check = confirm('주소지를 수정하시겠습니까?');
+                        if(!check){
+                            return ;
+                        }
+                    }
+                    new daum.Postcode({
+                        oncomplete: function(data) {
+                            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+                            // 예제를 참고하여 다양한 활용법을 확인해 보세요.
+                            const main = document.querySelector('[name="address_main"]');
+                            const zips = document.querySelector('[name="address_zip"]');
+
+                            let zip = data.zonecode // 우편
+                            let ra = data.roadAddress // 도로명 주소
+                            let ja = data.jibunAddress // 지번 주소
+                            let bn = data.buildingName // 건물 명
+                            if(data.userSelectedType == 'R'){
+                                main.value = ra + ' ' + bn;
+                            } else {
+                                main.value = ja + ' ' + bn;
+                            }
+                            zips.value = zip;
+                            main.setAttribute('lock','');
+                            zips.setAttribute('lock','');
+                            main.setAttribute('readonly','');
+                            zips.setAttribute('readonly','');
+                        }
+                    }).open();
+                });
+            }
         })
     },
     methods: {
         showError(input) {
-            console.log(input)
             // input.setCustomValidity(getMessage(input.validity) || '');
             const isErrorFirst = [...input.parentNode.children].slice(-1).pop();
             const isErrorSecond = input.parentNode.nextElementSibling;
             const target = isErrorFirst.classList.contains('error')?isErrorFirst:isErrorSecond;
+            const parent = target.parentNode;
+            const idx = [...parent.parentNode.children].indexOf(parent);
+
+            let min = 0;
+
+            if(target){
+                this.lazyText = 'button';
+            }
+
+            this.current = min<idx?min:idx;
+            this.goToOrder(min);
             target.textContent = this.getMessage(input.validity) || '';
         },
         getMessage(validity){
@@ -114,8 +171,11 @@ export default {
         checkFormValid(input, ev){
             ev.preventDefault();
             document.forms[0].classList.add('was-validated');
-            console.log(input)
             this.showError(input);
+        },
+        goToOrder(num) {
+            this.resetOrder();
+            this.signupOrder[num].show = true;
         },
         prevOrder(ev) {
             this.current>0?this.current -= 1:this.current;
@@ -133,6 +193,9 @@ export default {
         checkForm(ev){
             this.lazyText = 'submit';
             console.log(document.forms[0])
+        },
+        showToggle(ev){
+            this.showPass = !this.showPass;
         }
     },
     computed: {
@@ -158,7 +221,9 @@ export default {
             :orders="signupOrder"></module-breadcrumb>
             <form @submit.prevent="checkFormValid">
                 <module-signup
-                :orders="signupOrder"></module-signup>
+                @visible="showToggle"
+                :orders="signupOrder"
+                :showPass="showPass"></module-signup>
                 <div class="text-center">
                     <button
                     type="button"

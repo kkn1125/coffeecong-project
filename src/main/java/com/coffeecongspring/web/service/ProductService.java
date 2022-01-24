@@ -18,12 +18,12 @@ public class ProductService{
 		return productMapper.findAll();
 	}
 
-	public Optional<Product> findByNum(int num) {
-		return productMapper.findByNum(num);
+	public Product findByNum(int num) {
+		return productMapper.findByNum(num).orElse(null);
 	}
 
-	public Optional<Product> findByPid(String pid) {
-		return productMapper.findByPid(pid);
+	public Product findByPid(String pid) {
+		return productMapper.findByPid(pid).orElse(null);
 	}
 
 	public Integer add(Product product) {

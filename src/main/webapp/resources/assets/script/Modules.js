@@ -71,7 +71,7 @@ Vue.component('module-breadcrumb', {
     template: `
         <div class="breadcrumb">
             <span
-            :class="['fs-5 rounded-circle px-1', {tag: true,'tag-danger': current==item.id,'tag-light': current!=item.id,}]"
+            :class="['fs-5 rounded-circle', {tag: true,'tag-danger': current==item.id,'tag-light': current!=item.id,}]"
             v-for="item in orders">
             {{item.id+1}}
             </span>
@@ -80,7 +80,13 @@ Vue.component('module-breadcrumb', {
 })
 
 Vue.component('module-signup', {
-    props: ['orders'],
+    props: ['orders', 'showPass'],
+    methods: {
+        visibleToggle(ev){
+            console.log(ev)
+            this.$emit('visible')
+        }
+    },
     template: `
         <div
         style="min-height: 300px;"
@@ -98,7 +104,17 @@ Vue.component('module-signup', {
                     :name="i.name"
                     v-bind="i.options"
                     class="form-input form-input-lg"
-                    :type="i.type??'text'">
+                    :type="showPass?'text':i.type??'text'">
+                    <div v-if="item.id==1">
+                        <input
+                        @change="visibleToggle"
+                        type="checkbox"
+                        name="showPass"
+                        id="showPass">
+                        <label for="showPass">
+                            {{showPass?'비밀번호 숨기기':'비밀번호 보기'}}
+                        </label>
+                    </div>
                 </div>
                 <div class="error"></div>
             </div>
@@ -150,19 +166,24 @@ Vue.component('module-input-password', {
 });
 
 Vue.component('module-item-view', {
-    props: ['modules', 'blockStar', 'starPoint'],
+    props: ['modules', 'blockStar', 'starPoint', 'recentItem'],
+    computed: {
+        getRecent(){
+            return this.recentItem??false;
+        }
+    },
     template: `
     <div class="w-flex flex-column flex-row-lg vgap-3">
-        <div class="col text-center text-start-lg" style="max-height: 350px; overflow: hidden">
+        <div class="col text-center text-start-lg w-100" style="max-height: 350px; overflow: hidden">
             <img
             class="w-lg-100 w-auto"
             style="transform: translateY(-20%)"
-            src="https://coffeecg.com/web/product/extra/big/202011/16b2ccef73764b235ef511baf745fc1f.jpg"
+            :src="getRecent.image"
             alt="sample">
         </div>
         <div class="col">
             <div>
-                <span class="h5">New Item</span>
+                <span class="h5">{{getRecent.title}}</span>
                 <component
                 :starPoint="starPoint"
                 :blockStar="blockStar?true:false"
@@ -170,7 +191,7 @@ Vue.component('module-item-view', {
             </div>
             <div class="hr"></div>
             <div>
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nam quo voluptatum veniam sequi, laborum praesentium neque magni voluptate delectus aliquid eaque quas doloribus ipsam quaerat, commodi placeat dolore, ducimus perferendis?</p>
+                <p v-html="getRecent.content"></p>
             </div>
             <div
             class="w-flex gap-1 my-3 flex-wrap">
@@ -246,20 +267,25 @@ Vue.component('module-card', {
     computed: {
         autoComma(){
             return this.isPrice.toLocaleString()+'원';
+        },
+        removeImageTag(){
+            return (str)=>{
+                return new DOMParser().parseFromString(str, 'text/html').body.textContent;
+            }
         }
     },
     template: `
         <div>
             <img
             style="object-fit: cover; width: 100%;"
-            :src="'https://picsum.photos/300/200?random='+item.id"
+            :src="item.image"
             alt="sample">
 
-            <div class="card-title">{{item.name}}</div>
+            <div class="card-title">{{item.title}}</div>
 
             <div class="card-content">
                 <div class="card-body">
-                    {{item.content}}
+                    {{removeImageTag(item.content)}}
                 </div>
             </div>
 

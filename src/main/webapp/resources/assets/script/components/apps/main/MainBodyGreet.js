@@ -1,7 +1,8 @@
 export default {
     data(){
         return {
-            greetMessage: `CoffeeCong은 풍부한 맛과 향은 세계최고 품질의 원두와전문적 바리스타의 합작으로 탄생합니다.이제, CoffeeCong에서 진정한 커피를 즐겨보세요.`,
+            scrollWidth: (()=>navigator.userAgent.match(/mobile/gim)?0:17)(),
+            greetMessage: `CoffeeCong의 풍부한 맛과 향은 최상 품질의 원두와 커피 전문가의 노력으로 탄생합니다. CoffeeCong에서 진정한 커피의 맛과 향을 즐겨보세요.`,
             coverStyle: {
                 'position': 'absolute',
                 'top': '0px',
@@ -13,10 +14,10 @@ export default {
                 'background-attachment': 'fixed',
                 'object-position': 'center',
                 'object-fit': 'cover',
-                'background-size': ((window.innerHeight-61)*(window.innerWidth-17))/200+'px',
+                'background-size': ((window.innerHeight-61)*(window.innerWidth-(()=>navigator.userAgent.match(/mobile/gim)?0:17)()))/200+'px',
             },
             duplStyle: {
-                'width': document.body.scrollHeight>window.innerHeight-61?window.innerWidth-17+'px':window.innerWidth+'px',
+                'width': document.body.scrollHeight>window.innerHeight-61?window.innerWidth-(()=>navigator.userAgent.match(/mobile/gim)?0:17)()+'px':window.innerWidth+'px',
                 'height': window.innerHeight-61+'px',
             }
         }
@@ -31,12 +32,16 @@ export default {
     },
     methods: {
         handleResize(ev){
+            let isMobile = null;
+            setTimeout(()=>{
+                isMobile = navigator.userAgent.match(/mobile/gim)?0:17;
+            })
             let cover = document.querySelector('[alt="cover"]');
             let wrap = document.querySelector('.cc');
             wrap.style.height = window.innerHeight-61+'px';
-            wrap.style.width = document.body.scrollHeight>window.innerHeight-61?window.innerWidth-17+'px':window.innerWidth+'px';
+            wrap.style.width = document.body.scrollHeight>window.innerHeight-61?window.innerWidth-isMobile+'px':window.innerWidth+'px';
             cover.style.height = window.innerHeight-61+'px';
-            cover.style.width = document.body.scrollHeight>window.innerHeight-61?window.innerWidth-17+'px':window.innerWidth+'px';
+            cover.style.width = document.body.scrollHeight>window.innerHeight-61?window.innerWidth-isMobile+'px':window.innerWidth+'px';
         },
         handleScroll(ev){
             let cover = document.querySelector('[alt="cover"]');

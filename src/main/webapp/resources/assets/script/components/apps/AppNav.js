@@ -1,14 +1,11 @@
 import NavWrap from './nav/NavWrap.js';
 
 export default {
-    props: ['brand'],
+    props: ['brand', 'menulist'],
     data(){
         return {
             navClass: [
                 'gnb', 'position-sticky', 'bg-primary', 'us-none'
-            ],
-            menulist: [
-                'home', 'mall', 'sign-in', 'sign-up', 'about'
             ],
         }
     },

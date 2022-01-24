@@ -16,7 +16,20 @@ Vue.config.ignoredElements = [/^ion-/];
 new Vue({
     el: '#app',
     data: {
-        brand: 'CoffeeCong'
+        brand: 'CoffeeCong',
+        menulist: [
+            'mall', 'sign-in', 'sign-up'
+        ],
+        itemlist: [],
+    },
+    created() {
+        axios({
+            method: 'get',
+            url: '/product',
+        })
+        .then(response=>{
+            this.itemlist = response.data;
+        });
     },
     components: {
         AppNav,

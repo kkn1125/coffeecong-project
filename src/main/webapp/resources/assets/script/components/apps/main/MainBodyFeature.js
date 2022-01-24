@@ -1,4 +1,5 @@
 export default {
+    props: ['itemlist'],
     data(){
         return {
             originWidth: 0,
@@ -59,6 +60,11 @@ export default {
             }, 10);
         },
     },
+    computed: {
+        limitItemList(){
+            return this.itemlist.slice(-5);
+        }
+    },
     template: `
     <section class="fence-full fence-lg">
         <div>
@@ -71,12 +77,18 @@ export default {
                 <ion-icon name="caret-back-outline"></ion-icon>
             </div>
             <div class="img-slide mx-5">
-                <div class="img-item" v-for="i in 5">
+                <div
+                style="flex-shrink: 0;"
+                class="img-item"
+                v-for="item in limitItemList">
                     <div class="info-box">
                         <module-star :isSolid="true"></module-star>
                         <module-heart></module-heart>
                     </div>
-                    <img :src="'https://picsum.photos/250/250?random='+i" alt="sample">
+                    <img
+                    style="height: 100%; object-fit: cover;"
+                    :src="item.image"
+                    alt="sample">
                 </div>
             </div>
             <div
