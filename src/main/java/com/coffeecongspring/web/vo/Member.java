@@ -24,4 +24,8 @@ public class Member{
 	private long address_zip;
 	private Timestamp regdate;
 	private Timestamp updates;
+	public boolean validPassword(String password) {
+		if(this.password.equals(password)) return true;
+		return false;
+	}
 }

@@ -15,4 +15,7 @@ public class Base {
 		}
 		return sb;
 	}
+	static public boolean isNumber(String str) {
+		return str.matches("[0-9]+");
+	}
 }

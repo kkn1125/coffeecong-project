@@ -22,6 +22,7 @@
 		<tiles:insertAttribute name="body" />
 		<tiles:insertAttribute name="footer" />
 	</div>
+	
 	<script src="/resources/assets/script/App.js" type="module"></script>
 	<script src="https://cdn.jsdelivr.net/gh/kkn1125/penli@dabfbd0/docs/assets/js/penli.js" integrity="sha384-v8IcF+Ajik1Du5Pn4UGwOVizMisxuU6LhXVsWYy1WdP2+1MxTdeJRHuYeDAdtQ6v" crossorigin="anonymous"></script>
 	<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>

@@ -4,37 +4,349 @@
 'use strict';
 
 Object.defineProperty(Object.prototype, 'insertPad', {
+    /**Object.defineProperty(Object.__proto__, 'insertPad', {
     /**
-     * 
      * @param {int} length Insert string's max length.
      * @param {string} fillString Insert string.
      * @param {boolean} direction Direction to insert text.
      * @returns Filled strings
      */
-    value: function (length, fillString, direction){
-        return direction
-        ?this+(fillString?.toString()?.repeat(length)??'')
-        :(fillString?.toString()?.repeat(length)??'')+this;
-    }
+    value: function (length, fillString, direction) {
+        return direction ?
+            this + (fillString ?.toString() ?.repeat(length) ?? '') :
+            (fillString ?.toString() ?.repeat(length) ?? '') + this;
+    },
+    configurable: true,
 });
 
 Object.defineProperty(Object.prototype, 'stringToBinary', {
-    value: function (binary){
-        return this.split('').map(s=>s.charCodeAt(0).toString(binary)).map((x,i,o)=>{
-            if(i<o.length-1){
-                return x+String.fromCharCode(65+parseInt(Math.random()*25));
+    value: function (binary=36) {
+        return this.split('').map(s => s.charCodeAt(0).toString(binary)).map((x, i, o) => {
+            if (i < o.length - 1) {
+                return x + String.fromCharCode(65 + parseInt(Math.random() * 25));
             } else {
                 return x;
             }
         }).join('');
-    }
+    },
+    configurable: true,
 });
 
 Object.defineProperty(Object.prototype, 'binaryToString', {
-    value: function (binary){
-        return this.split(/[A-Z]+/gm).map(x=>String.fromCharCode(parseInt(x, binary))).join('');
-    }
+    value: function (binary=36) {
+        return this.split(/[A-Z]+/gm).map(x => String.fromCharCode(parseInt(x, binary))).join('');
+    },
+    configurable: true,
 });
+
+Object.defineProperty(Object.prototype, 'lock', {
+    value: function (binary=36) {
+        return this.split('').map((x, i, o) => x.charCodeAt(0).toString(binary) + (i != o.length - 1 ? String.fromCharCode(parseInt(Math.random() * 25) + 65) : '')).join('');
+    },
+    configurable: true,
+});
+
+Object.defineProperty(Object.prototype, 'unlock', {
+    value: function (binary=36) {
+        return this.split(/[A-Z]+/gm).map((x, i, o) => String.fromCharCode(parseInt(x, binary))).join('');
+    },
+    configurable: true,
+});
+
+Vue.component('module-slide', {
+    props: ['itemlist', 'clickOff'],
+    data(){
+        return {
+            originWidth: 0,
+            first: 0,
+            click: false,
+            autoSliding: false,
+            dragBefore: 0,
+            direction: false,
+            slideSpeed: 10,
+        }
+    },
+    created(){
+        window.addEventListener('mousedown', this.handleMouseDown);
+        window.addEventListener('mouseup', this.handleMouseUp);
+        window.addEventListener('mousemove', this.handleMouseMove);
+    },
+    beforeDestroy() {
+        window.removeEventListener('mousedown', this.handleMouseDown);
+        window.removeEventListener('mouseup', this.handleMouseUp);
+        window.removeEventListener('mouseup', this.handleMouseMove);
+    },
+    methods: {
+        handleMouseDown(ev){
+            const target = ev.target;
+            if(!target.closest('.img-slide')) return;
+
+            this.first = ev.clientX;
+            this.originWidth = target.closest('.img-slide').scrollLeft;
+            this.click = true;
+        },
+        handleMouseUp(ev){
+            this.click = false;
+            this.autoSliding = false;
+        },
+        handleMouseMove(ev){
+            if(this.click){
+                const target = document.querySelector('.img-slide');
+                target.scrollTo(this.originWidth-(ev.clientX-this.first), target.scrollHeight);
+                if(this.dragBefore<target.scrollLeft) this.direction = true; // right
+                else this.direction = false; // left
+                this.dragBefore = target.scrollLeft;
+            }
+        },
+        prevMove(ev){
+            const target = document.querySelector('.img-slide');
+            this.autoSliding = true;
+            let loop = setInterval(() => {
+                target.scrollLeft -= this.slideSpeed;
+                if(!this.autoSliding) clearInterval(loop);
+            }, 10);
+        },
+        nextMove(ev){
+            const target = document.querySelector('.img-slide');
+            this.autoSliding = true;
+            let loop = setInterval(() => {
+                target.scrollLeft += this.slideSpeed;
+                if(!this.autoSliding) clearInterval(loop);
+            }, 10);
+        },
+    },
+    computed: {
+        limitItemList(){
+            return this.itemlist.slice(-5);
+        }
+    },
+    template: `
+    <div class="img-slide-wrap">
+        <div
+        @mousedown="prevMove"
+        class="arrow-left h2 text-muted">
+            <ion-icon name="caret-back-outline"></ion-icon>
+        </div>
+        <div class="img-slide mx-5 col">
+            <div
+            style="flex-shrink: 0;"
+            class="img-item"
+            v-for="item in limitItemList">
+                <div class="info-box">
+                    <component :is="!clickOff?'module-star':''" :isSolid="true"></component>
+                    <component :is="!clickOff?'module-heart':''"></component>
+                </div>
+                <img
+                style="height: 100%; object-fit: cover;"
+                :src="item.image"
+                alt="sample">
+            </div>
+        </div>
+        <div
+        @mousedown="nextMove"
+        class="arrow-right h2 text-muted">
+            <ion-icon name="caret-forward-outline"></ion-icon>
+        </div>
+    </div>
+    `
+})
+
+Vue.component('module-review', {
+    props: ['num'],
+    data(){
+        return{
+            view: 3,
+            isSolid: true,
+        }
+    },
+    template: `
+    <div class="w-flex flex-column">
+        <div class="w-flex flex-column hgap-3">
+            <div
+            class="w-flex justify-content-between">
+                <div
+                class="w-flex flex-column align-items-start justify-content-center">
+                    <div>
+                        <span>Review</span>
+                        <span class="text-warning">({{view}})</span>
+                    </div>
+                    <div>
+                        <module-line-star></module-line-star>
+                    </div>
+                </div>
+                <div class="w-flex align-items-center vgap-3">
+                    <span>camera</span>
+                    <button class="btn btn-info">등록</button>
+                </div>
+            </div>
+            <div>
+                <textarea
+                name="content"
+                rows="10"
+                class="form-input w-100"
+                style="resize: vertical;"></textarea>
+            </div>
+        </div>
+        <div class="horizon-pad"></div>
+        <comment-wrap
+        num="num"></comment-wrap>
+    </div>
+    `
+})
+
+Vue.component('comment-wrap', {
+    props: ['num'],
+    data(){
+        return {
+            reviews: [],
+        }
+    },
+    beforeUpdate() {
+        axios({
+            method: 'get',
+            url: `/comment/pnum${num}`
+        }).then(response=>this.reviews = response.data)
+        .catch(e=>console.log(e));
+    },
+    template: `
+        <div class="w-flex flex-column hgap-3">
+            <module-comment
+            v-for="(item, idx) in 3"
+            :item="item"
+            :key="idx"></module-comment>
+            <div
+            v-if="reviews.length==0"
+            class="notice notice-danger">
+                등록된 리뷰가 없습니다.
+            </div>
+        </div>
+    `
+})
+
+Vue.component('module-comment',{
+    props: ['item'],
+    template: `
+        <div class="w-flex flex-column border border-light p-3 rounded-3">
+            <div class="w-flex justify-content-between align-items-center mb-3">
+                <div class="w-flex align-items-center hgap-3">
+                    <div>
+                        <img src="" alt="">
+                    </div>
+                    <div class="w-flex flex-column align-items-start">
+                        <div>
+                            name
+                        </div>
+                        <div>
+                            time
+                        </div>
+                    </div>
+                </div>
+                <div class="w-flex flex-column align-items-end">
+                    <module-line-star
+                    :blockStar="true"
+                    :startPoint="item.star"></module-line-star>
+                    <div>
+                        <span>
+                            <button class="btn btn-success">수정</button>
+                        </span>
+                        <span>
+                            <button class="btn btn-danger">삭제</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <p class="mb-3">
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquid laborum sint praesentium vel vero quidem assumenda velit. Impedit, veniam ipsam. Totam cupiditate quisquam non blanditiis quos maxime minus deleniti repudiandae.
+                </p>
+                <span>
+                    <span
+                    class="tag tag-info"
+                    v-for="i in 5">
+                        tags
+                    </span>
+                </span>
+            </div>
+        </div>
+    `
+})
+
+Vue.component('order-view', {
+    props: ['item'],
+    data(){
+        return {
+            images: [],
+        }
+    },
+    beforeUpdate() {
+        this.images.push({image: this.item.image});
+    },
+    watch: {
+        item: function (){
+            axios({
+                method: 'get',
+                url: '/productimg/pnum/'+this.item.num
+            }).then(response=>{
+                this.images.concat(response.data);
+            }).catch(e=>console.log(e));
+        }
+    },
+    computed: {
+        getItem(){
+            return this.item??false;
+        },
+        getContent(){
+            const items = this.item??false;
+            return new DOMParser().parseFromString(items.content, 'text/html').body.textContent;
+        },
+        getImages(){
+            return this.images;
+        }
+    },
+    template: `
+        <div
+        class="w-flex vgap-3">
+            <div class="col-10">
+                <img
+                class="w-100"
+                :src="getItem.image"
+                alt="image">
+                <module-slide
+                :clickOff="true"
+                :itemlist="getImages"></module-slide>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <span class="h4">{{getItem.title}}</span>
+                    <module-heart></module-heart>
+                </div>
+                <div v-html="getContent"></div>
+                <div
+                class="w-flex flex-column hgap-2">
+                    <div class="w-flex justify-content-between align-items-center vgap-2">
+                        <span class="col">상품 종류</span>
+                        <span class="col">
+                            <select
+                            class="form-select w-100"
+                            name="">
+                                <option :value="getItem.name">{{getItem.name}}</option>
+                            </select>
+                        </span>
+                    </div>
+                    <div class="w-flex justify-content-between align-items-center vgap-2">
+                        <span class="col">상품 수량</span>
+                        <span class="col">
+                            <input
+                            class="form-input w-100"
+                            type="text"
+                            pattern="[0-9]+">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+})
 
 Vue.component('module-input-id', {
     props: ['values'],
@@ -81,10 +393,29 @@ Vue.component('module-breadcrumb', {
 
 Vue.component('module-signup', {
     props: ['orders', 'showPass'],
+    data(){
+        return {
+            isError: false,
+            result: null,
+        }  
+    },
     methods: {
         visibleToggle(ev){
-            console.log(ev)
-            this.$emit('visible')
+            this.$emit('visible');
+        },
+        validId(ev){
+            if(ev.target.name != 'id') return ;
+            this.isError = false;
+
+            axios({
+                method: 'get',
+                url: `/member/id/${ev.target.value}`
+            })
+            .then(response=>{
+                this.result = response.data;
+                this.$emit('sendCheckId', this.result);
+            })
+            .catch(e=>this.isError = true);
         }
     },
     template: `
@@ -99,11 +430,16 @@ Vue.component('module-signup', {
                     <span class="h3">{{item.title}}</span>
                 </div>
                 <div class="w-flex flex-column hgap-2">
+                    <div class="checkId" v-if="item.id==1">
+                        {{isError?'Loading...':(result==''?'사용가능한 아이디입니다.':result!=null?'아이디가 중복됩니다.':'')}}
+                    </div>
                     <input required
+                    @keyup.prevent="validId"
                     v-for="i in item.input"
                     :name="i.name"
                     v-bind="i.options"
                     class="form-input form-input-lg"
+                    v-model="i.options.value"
                     :type="showPass?'text':i.type??'text'">
                     <div v-if="item.id==1">
                         <input
@@ -167,19 +503,49 @@ Vue.component('module-input-password', {
 
 Vue.component('module-item-view', {
     props: ['modules', 'blockStar', 'starPoint', 'recentItem'],
+    data(){
+        return {
+            taglist: [],
+        }
+    },
     computed: {
         getRecent(){
             return this.recentItem??false;
+        },
+        filterTagContent(){
+            const str = new DOMParser().parseFromString((this.recentItem??false).content, 'text/html').body.textContent;
+            return str!=''?str:'No Contents';
+        },
+        getTagList(){
+            if(this.recentItem){
+                axios({
+                    method: 'get',
+                    url: `/producttag/pnum/${this.recentItem.num}`
+                })
+                .then(response=>{
+                    this.taglist = response.data.content?.split(',')
+                })
+                .catch(e=>console.log(e));
+            }
+            return this.taglist;
+        },
+        getPath(){
+            if(this.recentItem){
+                return this.recentItem.num;
+            }
         }
     },
     template: `
     <div class="w-flex flex-column flex-row-lg vgap-3">
         <div class="col text-center text-start-lg w-100" style="max-height: 350px; overflow: hidden">
-            <img
-            class="w-lg-100 w-auto"
-            style="transform: translateY(-20%)"
-            :src="getRecent.image"
-            alt="sample">
+            <a
+            :href="'/mall/'+getPath">
+                <img
+                class="w-lg-100 w-auto"
+                style="transform: translateY(-20%)"
+                :src="getRecent.image"
+                alt="sample">
+            </a>
         </div>
         <div class="col">
             <div>
@@ -191,12 +557,20 @@ Vue.component('module-item-view', {
             </div>
             <div class="hr"></div>
             <div>
-                <p v-html="getRecent.content"></p>
+                <p>
+                    {{filterTagContent}}
+                </p>
             </div>
             <div
             class="w-flex gap-1 my-3 flex-wrap">
                 <span
-                class="tag tag-info" v-for="i in 10">test{{i}}</span>
+                class="tag tag-info"
+                v-for="(tag, idx) in getTagList"
+                :key="idx">{{tag}}</span>
+                <span
+                v-if="!getTagList||getTagList.length==0"
+                class="tag tag-danger"
+                >태그가 없습니다.</span>
             </div>
             <div>
                 <button class="btn btn-lg btn-info px-3 rounded-0">
@@ -213,35 +587,49 @@ Vue.component('module-item-view', {
 
 Vue.component('module-list', {
     props: ['item', 'isPrice'],
+    created() {
+        console.log(this.item)
+    },
     computed: {
         autoComma(){
             return this.isPrice.toLocaleString()+'원';
+        },
+        filteredContent(){
+            let str = new DOMParser().parseFromString(this.item.content, 'text/html').body.textContent;
+            return str.length>0?str:'No Contents';
+        },
+        getPath(){
+            if(this.item){
+                return this.item.num;
+            }
         }
     },
     template: `
         <li>
-            <span>
-                <img
-                style="object-fit: cover; width: 100%;"
-                :src="'https://picsum.photos/300/200?random='+item.id"
-                alt="sample">
-            </span>
-            <span class="w-flex flex-column justify-content-between hgap-3 col">
-                <span class="fs-3 fw-bold">{{item.name}}</span>
-                <span class="cut col align-self-center">
-                    {{item.content}}
+            <a :href="'/mall/'+getPath">
+                <span class="w-inline-block w-100">
+                    <img
+                    style="object-fit: cover; width: 100%;"
+                    :src="item.image"
+                    alt="sample">
                 </span>
-                <span class="w-inline-flex justify-content-start align-items-center vgap-3">
-                    <span v-if="!isPrice">
-                        <module-star :isSolid="true"></module-star>
-                        <module-heart></module-heart>
+                <span class="w-flex flex-column justify-content-between hgap-3 col">
+                    <span class="fs-3 fw-bold">{{item.name}}</span>
+                    <span class="cut col align-self-center">
+                        {{filteredContent}}
                     </span>
-                    <span v-else>
-                        price {{autoComma}}
+                    <span class="w-inline-flex justify-content-start align-items-center vgap-3">
+                        <span v-if="!isPrice">
+                            <module-star :isSolid="true"></module-star>
+                            <module-heart></module-heart>
+                        </span>
+                        <span v-else>
+                            price {{autoComma}}
+                        </span>
+                        <button class="btn btn-info">담기</button>
                     </span>
-                    <button class="btn btn-info">담기</button>
                 </span>
-            </span>
+            </a>
         </li>
     `
 });
@@ -272,16 +660,29 @@ Vue.component('module-card', {
             return (str)=>{
                 return new DOMParser().parseFromString(str, 'text/html').body.textContent;
             }
+        },
+        getPath(){
+            if(this.item){
+                return this.item.num;
+            }
         }
     },
     template: `
         <div>
-            <img
-            style="object-fit: cover; width: 100%;"
-            :src="item.image"
-            alt="sample">
+            <a
+            :href="'/mall/'+getPath">
+                <img
+                style="object-fit: cover; width: 100%;"
+                :src="item.image"
+                alt="sample">
+            </a>
 
-            <div class="card-title">{{item.title}}</div>
+            <div class="card-title">
+                <a
+                :href="'/mall/'+getPath">
+                    {{item.title}}
+                </a>
+            </div>
 
             <div class="card-content">
                 <div class="card-body">

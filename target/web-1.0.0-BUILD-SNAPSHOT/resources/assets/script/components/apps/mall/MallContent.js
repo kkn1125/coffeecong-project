@@ -1,111 +1,79 @@
 export default {
     data(){
         return {
+            min: 0,
+            max: 0,
+            type: 'bean',
+            priceGauge: 100,
             currentPrice: 'None',
             viewMode: false,
             beforeValue: 0,
             readyRange: false,
             params: null,
             limit: 6,
-            itemlistTemp: null,
-            itemlist: [
-                {
-                    id: 0,
-                    name: 'test1',
-                    content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia sit eum, odit in ut quaerat incidunt, nisi earum vel quo harum eos quasi dolorum totam at aliquam quisquam labore suscipit!',
-                    price: 15000,
-                },
-                {
-                    id: 1,
-                    name: 'test2',
-                    content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia sit eum, odit in ut quaerat incidunt, nisi earum vel quo harum eos quasi dolorum totam at aliquam quisquam labore suscipit!',
-                    price: 25000,
-                },
-                {
-                    id: 2,
-                    name: 'test3',
-                    content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia sit eum, odit in ut quaerat incidunt, nisi earum vel quo harum eos quasi dolorum totam at aliquam quisquam labore suscipit!',
-                    price: 15000,
-                },
-                {
-                    id: 3,
-                    name: 'test4',
-                    content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia sit eum, odit in ut quaerat incidunt, nisi earum vel quo harum eos quasi dolorum totam at aliquam quisquam labore suscipit!',
-                    price: 35000,
-                },
-                {
-                    id: 4,
-                    name: 'test5',
-                    content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia sit eum, odit in ut quaerat incidunt, nisi earum vel quo harum eos quasi dolorum totam at aliquam quisquam labore suscipit!',
-                    price: 10000,
-                },
-                {
-                    id: 5,
-                    name: 'test6',
-                    content: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia sit eum, odit in ut quaerat incidunt, nisi earum vel quo harum eos quasi dolorum totam at aliquam quisquam labore suscipit!',
-                    price: 8000,
-                },
-            ]
+            itemlistTemp: [],
+            itemlist: [],
         }
     },
     created(){
-        this.itemlistTemp = [...this.itemlist];
-        this.min = this.itemlistTemp.sort((a,b)=>a.price-b.price)[0].price;
-        this.max = this.itemlistTemp.sort((a,b)=>b.price-a.price)[0].price;
+        this.params = new Map(location.search.slice(1).split('&').map(x=>x.split('=')));
+        const type = this.params?.get('type');
 
-        this.params = location.search.slice(1).split('&').map(s=>{
-            if(s){
-                return new Map([s.split('=')]);
-            } else {
-                return s;
-            }
-        }).pop();
+        this.type = location.search==''?this.type:type??this.type;
+        
+        axios({
+            method: 'get',
+            url: '/product/category/'+this.type,
+        })
+        .then(response=>{
+            this.itemlist = response.data;
+
+            this.itemlistTemp = [...this.itemlist];
+            this.min = this.itemlistTemp.sort((a,b)=>a.price-b.price)[0].price;
+            this.max = this.itemlistTemp.sort((a,b)=>b.price-a.price)[0].price;
+            this.itemlistTemp.sort((a,b)=>a.id-b.id);
+        })
+        .catch(e=>console.log(e));
     },
     methods: {
         changeView(ev) {
             this.viewMode = !this.viewMode;
         },
         priceFilter(ev){
-            const value = parseInt(ev.target.value);
-            
-            const convertPrice = (priceGap) => (((this.max-this.min)/100) * priceGap) + this.min;
-
-            if(value != this.beforeValue){
-                if(this.readyRange){
-                    this.itemlistTemp = [...this.itemlist].filter(item=>item.price<=convertPrice(value));
-                    this.currentPrice = convertPrice(value).toLocaleString()+'원';
-                }
-                this.readyRange = true;
-            }
-
-
-            this.beforeValue = value;
+            return (((this.max-this.min)/100) * this.priceGauge) + this.min;
         },
         ordering(ev){
             switch(ev.target.value){
                 case 'price-down':
-                    this.itemlistTemp = this.itemlistTemp.sort((a,b)=>a.price-b.price);
+                    this.itemlistTemp = this.itemlist.sort((a,b)=>a.price-b.price);
                 break;
                 case 'price-up':
-                    this.itemlistTemp = this.itemlistTemp.sort((a,b)=>b.price-a.price);
+                    this.itemlistTemp = this.itemlist.sort((a,b)=>b.price-a.price);
                 break;
                 case 'product-up':
-                    this.itemlistTemp = this.itemlistTemp.sort((a,b)=>a.name.localeCompare(b.name));
+                    this.itemlistTemp = this.itemlist.sort((a,b)=>a.name.localeCompare(b.name));
                 break;
                 case 'product-down':
-                    this.itemlistTemp = this.itemlistTemp.sort((a,b)=>b.name.localeCompare(a.name));
+                    this.itemlistTemp = this.itemlist.sort((a,b)=>b.name.localeCompare(a.name));
                 break;
             }
         }
     },
     computed: {
+        computedPrice(){
+            return parseInt(this.priceFilter()) + '원';
+        },
         showCard(){
-            let page = this.params.size>0?this.params.get('page'):1;
+            let page = this.params?.get('page')??1;
             let max = parseInt(page)*this.limit;
+            let temp = [...this.itemlist].filter(x=>x.price<=this.priceFilter());
+            if(this.itemlistTemp.length != temp.length){
+                this.itemlistTemp = temp;
+            }
             if(max>this.itemlistTemp.length){
-                return this.itemlistTemp.slice((parseInt(page)-1)*this.limit).sort((a,b)=>a.id-b.id);
+                return this.itemlistTemp.slice((parseInt(page)-1)*this.limit);
             } else {
-                return this.itemlistTemp.slice((parseInt(page)-1)*this.limit, max).sort((a,b)=>a.id-b.id);
+                return this.itemlistTemp.slice((parseInt(page)-1)*this.limit, max);
             }
         },
         totalPage(){
@@ -118,10 +86,10 @@ export default {
         class="w-flex justify-content-end align-items-center vgap-3">
             <span>
                 <span class="text-muted fs-8">
-                    {{currentPrice}}
+                    {{computedPrice}}
                 </span>
                 <input
-                @mousemove="priceFilter"
+                v-model="priceGauge"
                 type="range"
                 name="price"
                 id="price">
@@ -157,7 +125,7 @@ export default {
         <div
         class="paginate btn-bundle">
             <a
-            :href="'?page='+i"
+            :href="'?page='+i+(type?'&type='+type:'')"
             class="btn btn-frame-info px-3"
             v-for="i in totalPage">{{i}}</a>
         </div>

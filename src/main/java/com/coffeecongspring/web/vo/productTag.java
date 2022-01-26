@@ -9,7 +9,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class productTag {
+public class ProductTag {
 	private int num;
 	private int pnum;
 	private String content;

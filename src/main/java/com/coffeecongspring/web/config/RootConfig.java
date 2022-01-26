@@ -20,6 +20,9 @@ public class RootConfig
 		mysql.setUrl("jdbc:mysql://localhost:3306/coffeespring");
 		mysql.setUsername("root");
 		mysql.setPassword("1234");
+//		mysql.setUrl("jdbc:mysql://o7ubfi2wnp9wj8pw:f9cc8eqwdzsd5mrv@ble5mmo2o5v9oouq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/kx15nbovban3cm41");
+//		mysql.setUsername("o7ubfi2wnp9wj8pw");
+//		mysql.setPassword("f9cc8eqwdzsd5mrv");
 		return mysql;
 	}
 	

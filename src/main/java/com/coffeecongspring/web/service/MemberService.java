@@ -15,7 +15,7 @@ import com.coffeecongspring.web.vo.Member;
 @Service
 public class MemberService {
 	@Autowired
-	MemberMapper memberMapper;
+	private MemberMapper memberMapper;
 	
 	public Integer genSample(int num) {
 		List<Member> list = memberMapper.findAll();

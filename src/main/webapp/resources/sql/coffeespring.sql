@@ -173,6 +173,23 @@ CREATE TABLE IF NOT EXISTS `coffeespring`.`cart` (
 ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `coffeespring`.`productimg`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `coffeespring`.`productimg` (
+  `num` INT NOT NULL AUTO_INCREMENT,
+  `pnum` INT NOT NULL,
+  `image` VARCHAR(500) NOT NULL,
+  INDEX `fk_table1_product3_idx` (`pnum` ASC) VISIBLE,
+  PRIMARY KEY (`num`),
+  CONSTRAINT `fk_table1_product3`
+    FOREIGN KEY (`pnum`)
+    REFERENCES `coffeespring`.`product` (`num`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -251,7 +268,12 @@ INSERT INTO product (pid, pname, title, subtitle, content, capacity, price, cate
 'wear',
 '/resources/assets/images/P0010C.jpg');
 
+select * from product where category like CONCAT('%', 'c', '%');
+
 desc product;
+desc member;
 show tables;
+
+desc comment;
 
 select * from member;

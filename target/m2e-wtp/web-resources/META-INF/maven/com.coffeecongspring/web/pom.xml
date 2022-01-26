@@ -209,7 +209,7 @@
 				<version>2.3</version>
 				<configuration>
 					<warSourceDirectory>src/main/webapp</warSourceDirectory>
-					<warName>MySpringMVC</warName>
+					<warName>coffeecongspring</warName>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>

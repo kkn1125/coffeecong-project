@@ -136,7 +136,7 @@ Java JSP 1개월 반 과정의 학원을 이수하고 마지막 2주 가량 남�
 |---|---|---|---|---|---|
 |num|INT|PK|카드 넘버|1||
 |mnum|INT|FK(→member.num)|멤버 넘버 참조|5||
-|pnum|INT|FK(→product.num)|상품 넘버 참조|MD 추천|상품의 태그|
+|pnum|INT|FK(→product.num)|상품 넘버 참조|||
 |id|VARCHAR(300)||주문 아이디|kyl968qh :: new Date().getTime().toString(36)|프론트에서 long타입 시간 → 36진수로 변환|
 |capacity|INT||주문 수량|||
 |regdate|TIMESTAMP||생성일||자동 등록|

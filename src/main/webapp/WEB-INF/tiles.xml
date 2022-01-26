@@ -13,4 +13,8 @@
     <put-attribute name="body" value="/WEB-INF/views/{1}.jsp" />
   </definition>
 
+  <definition name="mall.*" extends="baseLayer">
+    <put-attribute name="body" value="/WEB-INF/views/mall/{1}.jsp" />
+  </definition>
+
 </tiles-definitions>

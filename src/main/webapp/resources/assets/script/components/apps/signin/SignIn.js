@@ -1,6 +1,7 @@
 export default{
     data(){
         return {
+            member: null,
             saveMode: false,
             values: {},
             showPass: false,
@@ -25,13 +26,47 @@ export default{
         document.querySelectorAll('input:not([type="checkbox"])').forEach(input=>{
             input.addEventListener('invalid', this.checkForm.bind(this, input))
             input.addEventListener('input', this.renderErrorBox.bind(this, input))
-        })
+        });
+
+        const memberInfo = sessionStorage['member']?JSON.parse(sessionStorage['member']):null;
+        let validInfo = null;
+
+        this.saveMode = memberInfo?.save??false;
+        if(memberInfo?.save){
+            document.login.id.value = memberInfo.id;
+            try{
+                validInfo = JSON.parse(memberInfo.token.unlock());
+            } catch(e){
+                console.error(e.message);
+            }
+            if(validInfo){
+                if(validInfo.id == memberInfo.id){
+                    axios({
+                        method: 'get',
+                        url: '/member/id/'+validInfo.id,
+                    })
+                    .then(response=>document.login.password.value = response.data.password)
+                    .catch(e=>console.log(e))
+                }
+            }
+        }
     },
     beforeDestroy() {
         document.querySelectorAll('input:not([type="checkbox"])').forEach(input=>{
             input.removeEventListener('invalid', this.checkForm.bind(this, input));
             input.removeEventListener('input', this.renderErrorBox.bind(this, input));
         });
+    },
+    computed: {
+        getError(){
+            if(location.search=='') return false;
+            const params = location.search.slice(1).split('&').map(x=>new Map([x.split('=')]));
+            const errorValue = params.filter(x=>x.has('e')).pop()?.get('e');
+            if(errorValue){
+                return true;
+            }
+            return false;
+        }
     },
     methods: {
         showError(input) {
@@ -66,8 +101,51 @@ export default{
             // console.log(this.saveMode)
         },
         validateForm(ev){ // 분기문 해서 saveMode가 켜져있으면 로컬 저장 암호화, 아니면 로그인
-            console.log(ev);
-            console.log(this.saveMode);
+            // console.log(ev);
+            // console.log(this.saveMode);
+            const form = ev.target;
+            const id = form.id?.value;
+            const email = form.email?.value;
+            const password = form.password?.value;
+            let validInfo = null;
+            let validType = null;
+            form.action = '/signin';
+            form.method = 'post';
+
+            if(id!=''){
+                validInfo = id;
+                validType = 'id';
+            } else if(email){
+                validInfo = email;
+                validType = 'email';
+            }
+
+            axios({
+                method: 'get',
+                url: `/member/${validType}/${validInfo}`
+            })
+            .then(response=>{
+                if(response.status == 200){
+                    const data = response.data;
+                    console.log(data.password, password)
+                    if(data.password == password){
+                        // if(!sessionStorage['member']){
+                        sessionStorage['member'] = JSON.stringify({
+                            id: data.id,
+                            token: JSON.stringify(response.data).lock(),
+                            expired: new Date().getTime() + (1000*60*60*1),
+                            save: this.saveMode,
+                            active: true,
+                        })
+                        // }
+                        form.submit();
+                    } else {
+                        location = '/signin?e=1'
+                    }
+                }
+            })
+            // .catch(e=>console.log(e))
+            .catch(e=> location = '/signin?e=1');
         },
         redirection(href){
             location.href = href;
@@ -81,6 +159,7 @@ export default{
                     <span class="h3">Welcome!</span>
                 </div>
                 <form
+                name="login"
                 @submit.prevent="validateForm"
                 class="w-flex flex-column align-items-start hgap-3 w-100 mt-5">
                     <component
@@ -93,7 +172,9 @@ export default{
                     <module-input-password
                     :showPass="showPass"></module-input-password>
                     <div class="error"></div>
-        
+                    <div class="notice notice-danger" v-if="getError">
+                        아이디나 비밀번호가 틀립니다. 다시 로그인 해주세요.
+                    </div>
                     <span>
                         <input
                         @click="showPass=!showPass"
@@ -103,6 +184,7 @@ export default{
                     <span>
                         <input
                         @click="saveInfo"
+                        :checked="saveMode"
                         type="checkbox"
                         id="save"><label for="save">로그인 정보 저장</label>
                     </span>

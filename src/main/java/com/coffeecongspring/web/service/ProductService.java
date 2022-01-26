@@ -12,7 +12,7 @@ import com.coffeecongspring.web.vo.Product;
 @Service
 public class ProductService{
 	@Autowired
-	ProductMapper productMapper;
+	private ProductMapper productMapper;
 
 	public List<Product> findAll() {
 		return productMapper.findAll();
@@ -24,6 +24,10 @@ public class ProductService{
 
 	public Product findByPid(String pid) {
 		return productMapper.findByPid(pid).orElse(null);
+	}
+	
+	public List<Product> findByCategory(String category) {
+		return productMapper.findByCategory(category);
 	}
 
 	public Integer add(Product product) {

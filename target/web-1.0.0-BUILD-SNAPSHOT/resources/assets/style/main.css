@@ -26,6 +26,49 @@ ion-icon {
   --pl-point-b: 108;
 }
 
+@media (min-width: 768px) {
+  .fs-md-0 {
+    font-size: var(--pl-font-size-0);
+  }
+
+  .fs-md-1 {
+    font-size: var(--pl-font-size-1);
+  }
+
+  .fs-md-2 {
+    font-size: var(--pl-font-size-2);
+  }
+
+  .fs-md-3 {
+    font-size: var(--pl-font-size-3);
+  }
+
+  .fs-md-4 {
+    font-size: var(--pl-font-size-4);
+  }
+
+  .fs-md-5 {
+    font-size: var(--pl-font-size-5);
+  }
+
+  .fs-md-6 {
+    font-size: var(--pl-font-size-6);
+  }
+
+  .fs-md-7 {
+    font-size: var(--pl-font-size-7);
+  }
+
+  .fs-md-8 {
+    font-size: var(--pl-font-size-8);
+  }
+}
+[lock] {
+  background: #bfbfbf;
+  user-select: none;
+  color: #858585;
+}
+
 .error {
   color: rgb(var(--pl-danger-r), var(--pl-danger-g), var(--pl-danger-b));
   text-align: center;

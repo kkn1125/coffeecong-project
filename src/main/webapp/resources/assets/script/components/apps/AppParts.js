@@ -1,7 +1,19 @@
+import DetailProduct from './detail/DetailProduct.js';
 import MallHead from './mall/MallHead.js';
 import MallContent from './mall/MallContent.js';
 import SignIn from './signin/SignIn.js';
 import SignUp from './signup/SignUp.js';
+
+const AppDetail = {
+    template: `
+        <main>
+            <detail-product></detail-product>
+        </main>
+    `,
+    components: {
+        DetailProduct
+    }
+}
 
 const AppMallSide = {
     data(){
@@ -34,7 +46,7 @@ const AppMallSide = {
                     class="list-item"
                     v-for="li in list"
                     :key="li.id">
-                        <a :href="'/'+li.name">{{uppercase(li.name)}}</a>
+                        <a :href="'?type='+li.name">{{uppercase(li.name)}}</a>
                     </li>
                     
                 </ul>
@@ -95,6 +107,7 @@ const AppAbout = {
 }
 
 export default {
+    AppDetail,
     AppMallSide,
     AppMall,
     AppSignUp,

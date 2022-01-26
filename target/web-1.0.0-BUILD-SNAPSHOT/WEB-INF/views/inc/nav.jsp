@@ -1,1 +1,3 @@
-<app-nav :brand="brand"></app-nav>
+<app-nav
+:brand="brand"
+:menulist="menulist"></app-nav>

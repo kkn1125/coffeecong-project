@@ -1,9 +1,11 @@
 export default {
     data() {
         return {
+            showPass: false,
             lazyText: 'button',
             current: 0,
             btnStyle: ['btn', {'btn-info': true}, 'btn-lg', 'px-2', 'rounded-0'],
+            payload: true,
             validityMessage: {
                 badInput: '[Warn] 잘못된 입력입니다.',
                 patternMismatch: '[Warn] 패턴에 맞게 입력해주세요.',
@@ -26,6 +28,7 @@ export default {
                             type: 'text',
                             options: {
                                 placeholder: '이름을 입력해주세요',
+                                value: '',
                             }
                         }, 
                         {
@@ -39,18 +42,6 @@ export default {
                 },
                 {
                     id: 1,
-                    title: '개인정보를 입력해 주세요.',
-                    show: false,
-                    input: [
-                        {
-                            name: 'datetime',
-                            type: 'text',
-                            options: ''
-                        }, 
-                    ]
-                },
-                {
-                    id: 2,
                     title: '아이디와 패스워드를 입력해주세요',
                     show: false,
                     input: [
@@ -58,28 +49,77 @@ export default {
                             name: 'id',
                             type: 'text',
                             options: {
-                                autocomplete: 'username'
+                                autocomplete: 'username',
+                                placeholder: 'kimson1234',
+                                value: '',
+                            }
+                        },
+                        {
+                            name: 'email',
+                            type: 'email',
+                            options: {
+                                autocomplete: 'username',
+                                placeholder: 'kimson1234@naver.com',
+                                value: '',
                             }
                         },
                         {
                             name: 'password',
-                            type: 'text',
+                            type: 'password',
                             options: {
-                                autocomplete: 'current-password'
+                                autocomplete: 'current-password',
+                                value: '',
                             }
                         },
                     ]
                 },
                 {
-                    id: 3,
-                    title: '이름을 입력해 주세요',
+                    id: 2,
+                    title: '주소지를 입력해주세요',
                     show: false,
                     input: [
                         {
-                            name: '',
+                            name: 'temp_address_main',
                             type: 'text',
-                            options: ''
-                        }, 
+                            options: {
+                                placeholder: '서울시 중랑구 ...',
+                                value: '',
+                            }
+                        },
+                        {
+                            name: 'address_sub',
+                            type: 'text',
+                            options: {
+                                placeholder: '402호',
+                                value: '',
+                            }
+                        },
+                        {
+                            name: 'temp_address_zip',
+                            type: 'text',
+                            options: {
+                                placeholder: '12345',
+                                value: '',
+                            }
+                        },
+                        {
+                            name: 'address_main',
+                            type: 'text',
+                            options: {
+                                placeholder: '서울시 중랑구 ...',
+                                value: '',
+                                hidden: true,
+                            }
+                        },
+                        {
+                            name: 'address_zip',
+                            type: 'text',
+                            options: {
+                                placeholder: '12345',
+                                value: '',
+                                hidden: true,
+                            }
+                        },
                     ]
                 },
             ]
@@ -87,17 +127,72 @@ export default {
     },
     mounted() {
         document.querySelectorAll('input:not([type="checkbox"])').forEach(input=>{
-            input.addEventListener('invalid', this.checkFormValid.bind(this, input))
-            input.addEventListener('input', this.renderErrorBox.bind(this, input))
+            input.addEventListener('invalid', this.checkFormValid.bind(this, input));
+            input.addEventListener('input', this.renderErrorBox.bind(this, input));
+            if(input.name.match(/address_main|zip/gm)){
+                input.addEventListener('click', this.getJuso);
+            }
         })
     },
     methods: {
+        getJuso(ev){
+            let root = this;
+            if(ev.target.getAttribute('lock')==''){
+                let check = confirm('주소지를 수정하시겠습니까?');
+                if(!check){
+                    return ;
+                }
+            }
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+                    // 예제를 참고하여 다양한 활용법을 확인해 보세요.
+                    const tempMain = document.querySelector('[name="temp_address_main"]');
+                    const tempZip = document.querySelector('[name="temp_address_zip"]');
+                    const main = document.querySelector('[name="address_main"]');
+                    const zips = document.querySelector('[name="address_zip"]');
+                    let juso = '';
+                    let zip = data.zonecode // 우편
+                    let ra = data.roadAddress // 도로명 주소
+                    let ja = data.jibunAddress // 지번 주소
+                    let bn = data.buildingName // 건물 명
+                    if(data.userSelectedType == 'R'){
+                        juso = ra + ' ' + bn;
+                    } else {
+                        juso = ja + ' ' + bn;
+                    }
+                    
+                    root.signupOrder[2].input.map(x=>{
+                        if(x.name.match(/main/gm)){
+                            x.options.value = juso;
+                        } else if(x.name.match(/zip/gm)) {
+                            x.options.value = zip;
+                        }
+                    });
+
+                    main.value = juso;
+                    tempMain.value = juso;
+
+                    zips.value = zip;
+                    tempZip.value = zip;
+
+                    tempMain.setAttribute('lock','');
+                    tempZip.setAttribute('lock','');
+                    tempMain.setAttribute('readonly','');
+                    tempZip.setAttribute('readonly','');
+                }
+            }).open();
+        },
         showError(input) {
-            console.log(input)
             // input.setCustomValidity(getMessage(input.validity) || '');
             const isErrorFirst = [...input.parentNode.children].slice(-1).pop();
             const isErrorSecond = input.parentNode.nextElementSibling;
             const target = isErrorFirst.classList.contains('error')?isErrorFirst:isErrorSecond;
+
+            if(target){
+                this.lazyText = 'button';
+            }
+
             target.textContent = this.getMessage(input.validity) || '';
         },
         getMessage(validity){
@@ -114,8 +209,11 @@ export default {
         checkFormValid(input, ev){
             ev.preventDefault();
             document.forms[0].classList.add('was-validated');
-            console.log(input)
             this.showError(input);
+        },
+        goToOrder(num) {
+            this.resetOrder();
+            this.signupOrder[num].show = true;
         },
         prevOrder(ev) {
             this.current>0?this.current -= 1:this.current;
@@ -132,7 +230,53 @@ export default {
         },
         checkForm(ev){
             this.lazyText = 'submit';
-            console.log(document.forms[0])
+            const wrap = document.forms[0];
+
+            for(let i of [...wrap].filter(x=>x.required)){
+                if(i.value.trim()==''){
+                    this.current = [...i.parentNode.parentNode.parentNode.children].indexOf(i.parentNode.parentNode);
+                    this.goToOrder(this.current);
+                    break;
+                }
+            }
+        },
+        showToggle(ev){
+            this.showPass = !this.showPass;
+        },
+        sendForm(){
+            if(this.payload){
+                axios({
+                    method: 'post',
+                    url: '/member',
+                    params: {
+                        id: decodeURIComponent(document.signup.id.value),
+                        email: decodeURIComponent(document.signup.email.value),
+                        password: decodeURIComponent(document.signup.password.value),
+                        name: decodeURIComponent(document.signup.name.value),
+                        birth: decodeURIComponent(document.signup.birth.value),
+                        address_main: decodeURIComponent(document.signup.address_main.value),
+                        address_sub: decodeURIComponent(document.signup.address_sub.value),
+                        address_zip: decodeURIComponent(document.signup.address_zip.value),
+                    }
+                })
+                .then(response=> {
+                    if(response.status==200) {
+                        location.href = "/";
+                    }
+                })
+                .catch(e=> {
+                    alert('회원가입에 실패했습니다.');
+                    location.reload();
+                });
+            } else {
+                alert('아이디가 중복됩니다.');
+                this.current = 1;
+                this.goToOrder(this.current);
+            }
+        },
+        checkId(payload){
+            console.log(payload)
+            this.payload = payload==''?true:false;
         }
     },
     computed: {
@@ -156,9 +300,14 @@ export default {
             <module-breadcrumb
             :current="current"
             :orders="signupOrder"></module-breadcrumb>
-            <form @submit.prevent="checkFormValid">
+            <form
+            name="signup"
+            @submit.prevent="sendForm">
                 <module-signup
-                :orders="signupOrder"></module-signup>
+                @sendCheckId="checkId"
+                @visible="showToggle"
+                :orders="signupOrder"
+                :showPass="showPass"></module-signup>
                 <div class="text-center">
                     <button
                     type="button"
