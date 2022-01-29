@@ -1,7 +1,10 @@
 export default {
-    props: ['brand', 'menulist'],
+    props: ['brand'],
     data() {
         return {
+            menulist: [ // bus 받기
+                'mall'
+            ],
             footerClass: [
                 'footer', 'bg-light', 'p-3', 'w-flex', 'justify-content-center justify-content-md-start'
             ],
@@ -19,7 +22,9 @@ export default {
         },
     },
     template: `
-    <footer :class="footerClass">
+    <footer
+    :class="footerClass">
+        <ModuleUserMenu/>
         <span class="brand text-white fw-bold">
             <a href="index.html">{{brand}}</a>
         </span>

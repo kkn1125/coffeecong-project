@@ -27,7 +27,10 @@ public class ServletConfig implements WebMvcConfigurer
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedMethods(
+		registry.addMapping("/**")
+		.allowedOrigins("https://coffeecong.herokuapp.com")
+//				.allowedOrigins("http://localhost:8080", "http://localhost:8081")
+				.allowedMethods(
 					HttpMethod.GET.name(),
 					HttpMethod.POST.name(),
 					HttpMethod.PUT.name(),

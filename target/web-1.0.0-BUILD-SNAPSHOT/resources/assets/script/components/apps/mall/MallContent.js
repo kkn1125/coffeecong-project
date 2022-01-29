@@ -5,10 +5,7 @@ export default {
             max: 0,
             type: 'bean',
             priceGauge: 100,
-            currentPrice: 'None',
             viewMode: false,
-            beforeValue: 0,
-            readyRange: false,
             params: null,
             limit: 6,
             itemlistTemp: [],
@@ -51,10 +48,10 @@ export default {
                     this.itemlistTemp = this.itemlist.sort((a,b)=>b.price-a.price);
                 break;
                 case 'product-up':
-                    this.itemlistTemp = this.itemlist.sort((a,b)=>a.name.localeCompare(b.name));
+                    this.itemlistTemp = this.itemlist.sort((a,b)=>a.pname.localeCompare(b.pname));
                 break;
                 case 'product-down':
-                    this.itemlistTemp = this.itemlist.sort((a,b)=>b.name.localeCompare(a.name));
+                    this.itemlistTemp = this.itemlist.sort((a,b)=>b.pname.localeCompare(a.pname));
                 break;
             }
         }
@@ -110,10 +107,10 @@ export default {
         </div>
 
         <component
-        :is="viewMode?'module-group-list':'module-group-card'"
+        :is="viewMode?'ModuleGroupList':'ModuleGroupCard'"
         :class="viewMode?'list-group':'card-group card-dv-2 card-dv-lg-3'">
             <component
-            :is="viewMode?'module-list':'module-card'"
+            :is="viewMode?'ModuleList':'ModuleCard'"
             v-for="(item) in showCard"
             :isPrice="item.price"
             :class="viewMode?'list-item py-3 w-flex justify-content-between vgap-5':'card'"

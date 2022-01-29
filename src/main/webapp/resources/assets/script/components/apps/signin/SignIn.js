@@ -33,7 +33,8 @@ export default{
 
         this.saveMode = memberInfo?.save??false;
         if(memberInfo?.save){
-            document.login.id.value = memberInfo.id;
+            this.id = memberInfo.id;
+            this.email = memberInfo.email;
             try{
                 validInfo = JSON.parse(memberInfo.token.unlock());
             } catch(e){
@@ -112,7 +113,7 @@ export default{
             form.action = '/signin';
             form.method = 'post';
 
-            if(id!=''){
+            if(this.convertWay){
                 validInfo = id;
                 validType = 'id';
             } else if(email){
@@ -127,24 +128,21 @@ export default{
             .then(response=>{
                 if(response.status == 200){
                     const data = response.data;
-                    console.log(data.password, password)
                     if(data.password == password){
-                        // if(!sessionStorage['member']){
                         sessionStorage['member'] = JSON.stringify({
                             id: data.id,
+                            email: data.email,
                             token: JSON.stringify(response.data).lock(),
                             expired: new Date().getTime() + (1000*60*60*1),
                             save: this.saveMode,
                             active: true,
                         })
-                        // }
                         form.submit();
                     } else {
                         location = '/signin?e=1'
                     }
                 }
             })
-            // .catch(e=>console.log(e))
             .catch(e=> location = '/signin?e=1');
         },
         redirection(href){
@@ -164,13 +162,16 @@ export default{
                 class="w-flex flex-column align-items-start hgap-3 w-100 mt-5">
                     <component
                     @sendV="getValue"
-                    :values="convertWay?values['id']:values['email']"
+                    @inputId="id = $event"
+                    @inputEmail="email = $event"
+                    :id="id"
+                    :email="email"
                     :is="convertWay?
-                    'module-input-id':'module-input-email'"></component>
+                    'ModuleInputId':'ModuleInputEmail'"></component>
                     <div class="error"></div>
 
-                    <module-input-password
-                    :showPass="showPass"></module-input-password>
+                    <ModuleInputPassword
+                    :showPass="showPass"/>
                     <div class="error"></div>
                     <div class="notice notice-danger" v-if="getError">
                         아이디나 비밀번호가 틀립니다. 다시 로그인 해주세요.

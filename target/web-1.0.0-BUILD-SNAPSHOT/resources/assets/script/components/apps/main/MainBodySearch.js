@@ -5,8 +5,7 @@ export default {
     template: `
     <section class="fence-full fence-lg">
         <div>
-            <component
-            is="search-table"></component>
+            <SearchTable/>
         </div>
     </section>
     `,

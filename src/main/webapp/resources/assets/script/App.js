@@ -21,9 +21,6 @@ new Vue({
     el: '#app',
     data: {
         brand: 'CoffeeCong',
-        menulist: [
-            'mall', 'sign-in', 'sign-up'
-        ],
         itemlist: [],
         logTime: {
             h:0,

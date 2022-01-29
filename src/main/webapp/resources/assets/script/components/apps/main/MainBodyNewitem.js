@@ -2,10 +2,10 @@ export default {
     props: ['recentItem'],
     template: `
     <section class="fence-full fence-lg">
-        <module-item-view
+        <ModuleItemView
         :recentItem="recentItem"
         :starPoint="2"
-        :blockStar="true"></module-item-view>
+        :blockStar="true"/>
     </section>
     `,
 }

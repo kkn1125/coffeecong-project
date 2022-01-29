@@ -53,6 +53,131 @@ Object.defineProperty(Object.prototype, 'unlock', {
     configurable: true,
 });
 
+Object.filter = (obj, predicate) => 
+    Object.keys(obj)
+        .filter(key => predicate(obj[key]))
+        .reduce((res, key) => (res[key] = obj[key], res), {});
+
+Vue.component('module-user-menu', {
+    data(){
+        return {
+            loggedIn: false,
+            showModal: false,
+            shadow: {
+                boxShadow: '0 0 1rem 0 rgba(0,0,0,0.15)',
+            },
+            centerClass: 'w-flex align-items-center justify-content-center',
+            badgeClass: 'rounded-circle bg-info text-white fs-1',
+            fixed: 'position-fixed',
+            roundBox: 'rounded-3 text-muted fw-bold bg-white',
+            fixStyle: {
+                right: '30px',
+                bottom: '30px',
+            },
+            fixSize: {
+                width: '50px',
+                height: '50px',
+            },
+            list: {
+                setting: {
+                    name: '',
+                    visible: this.loggedIn,
+                },
+                history: {
+                    name: '주문 내역',
+                    visible: this.loggedIn,
+                },
+                cart: {
+                    name: '카트 보기',
+                    visible: this.loggedIn,
+                },
+                // setting: {
+                //     name: '회원 정보 수정',
+                //     visible: this.loggedIn,
+                // },
+                signin : {
+                    name: 'sign in',
+                    visible: !this.loggedIn,
+                },
+                signup : {
+                    name: 'sign up',
+                    visible: !this.loggedIn,
+                },
+                '': {
+                    name: '<ion-icon name="log-out-outline"></ion-icon> sign out',
+                    visible: this.loggedIn,
+                }
+            },
+            memberInfo: null,
+        }
+    },
+    watch: {
+        memberInfo: function (val, old){
+            this.list.setting.name = val.id+'님 접속 중'
+        }
+    },
+    methods: {
+        setModal(ev){
+            if(ev.target.closest('.user-modal-btn')) this.showModal = true;
+            else this.showModal = false;
+        },
+        signout(ev){
+            const target = ev.target;
+            if(target.getAttribute('href') == '/'){
+                ev.preventDefault();
+                this.memberInfo.active = false;
+                sessionStorage['member'] = JSON.stringify(this.memberInfo);
+                location = '/?e=2'
+            }
+        }
+    },
+    computed: {
+        tempList(){
+            return Object.filter(this.list, (value)=> value.visible);
+        }
+    },
+    created(){
+        window.addEventListener('click', this.setModal);
+
+        this.memberInfo = sessionStorage['member']?JSON.parse(sessionStorage['member']):null;
+
+        if(this.memberInfo && this.memberInfo.active){
+            Object.keys(this.list).forEach(x=>this.list[x].visible = !this.list[x].visible);
+        } else {
+            Object.keys(this.list).forEach(x=>this.list[x].visible = this.list[x].visible);
+        }
+    },
+    beforeDestroy() {
+        window.removeEventListener('click', this.setModal);
+    },
+    template: `
+        <div
+        :class="[ centerClass, badgeClass, fixed, 'user-modal-btn' ]"
+        :style="[ fixStyle, fixSize, {cursor: 'pointer'} ]"
+        >
+            <ion-icon name="person-circle-outline"></ion-icon>
+            <div
+            v-if="showModal"
+            :class="[ fixed, roundBox, 'user-modal' ]"
+            :style="[ fixStyle, {width: '200px', cursor: 'auto'}, shadow ]">
+                <ul class="list-group fs-7">
+                    <li
+                    style="text-transform: none;"
+                    class="list-item ps-3"
+                    v-for="(v, k, i) in tempList"
+                    :key="i">
+                        <a
+                        @click="signout"
+                        :href="'/'+k"
+                        v-html="v.name">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    `
+})
+
 Vue.component('module-slide', {
     props: ['itemlist', 'clickOff'],
     data(){
@@ -349,17 +474,21 @@ Vue.component('order-view', {
 })
 
 Vue.component('module-input-id', {
-    props: ['values'],
-    methods: {
-        sendValue(ev){
-            this.$emit('sendV', ['id', ev.target.value]);
+    props: ['id'],
+    computed: {
+        idValue: {
+            get(){
+                return this.id;
+            },
+            set(val){
+                this.$emit('inputId', val);
+            }
         }
     },
     template: `
         <div class="position-relative w-100">
             <input required
-            @keyup="sendValue"
-            :value="values"
+            v-model="idValue"
             pattern="[A-z0-9]+"
             name="id"
             class="form-input form-input-lg w-100"
@@ -370,6 +499,35 @@ Vue.component('module-input-id', {
             class="position-absolute"
             style="top: 23%; left: 0.5rem;"
             name="albums-outline"></ion-icon>
+        </div>
+    `
+});
+
+Vue.component('module-input-email', {
+    props: ['email'],
+    computed: {
+        emailValue: {
+            get(){
+                return this.email;
+            },
+            set(val){
+                this.$emit('inputEmail', val);
+            }
+        }
+    },
+    template: `
+        <div class="position-relative w-100">
+            <input required
+            v-model="emailValue"
+            name="email"
+            class="form-input form-input-lg w-100"
+            style="padding-left: 2rem;"
+            type="email"
+            autocomplete="username">
+            <ion-icon
+            class="position-absolute"
+            style="top: 23%; left: 0.5rem;"
+            name="mail-outline"></ion-icon>
         </div>
     `
 });
@@ -454,31 +612,6 @@ Vue.component('module-signup', {
                 </div>
                 <div class="error"></div>
             </div>
-        </div>
-    `
-});
-
-Vue.component('module-input-email', {
-    props: ['values'],
-    methods: {
-        sendValue(ev){
-            this.$emit('sendV', ['email',ev.target.value]);
-        }
-    },
-    template: `
-        <div class="position-relative w-100">
-            <input required
-            @keyup="sendValue"
-            :value="values"
-            name="email"
-            class="form-input form-input-lg w-100"
-            style="padding-left: 2rem;"
-            type="email"
-            autocomplete="username">
-            <ion-icon
-            class="position-absolute"
-            style="top: 23%; left: 0.5rem;"
-            name="mail-outline"></ion-icon>
         </div>
     `
 });
@@ -587,9 +720,6 @@ Vue.component('module-item-view', {
 
 Vue.component('module-list', {
     props: ['item', 'isPrice'],
-    created() {
-        console.log(this.item)
-    },
     computed: {
         autoComma(){
             return this.isPrice.toLocaleString()+'원';

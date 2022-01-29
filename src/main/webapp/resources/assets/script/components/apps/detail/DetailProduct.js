@@ -20,10 +20,10 @@ export default {
     template: `
         <section class="fence-full fence-lg">
             <div class="horizon-pad"></div>
-            <order-view
-            :item="product"></order-view>
-            <module-review
-            :num="pnum"></module-review>
+            <OrderView
+            :item="product"/>
+            <ModuleReview
+            :num="pnum"/>
             <div class="horizon-pad"></div>
         </section>
     `

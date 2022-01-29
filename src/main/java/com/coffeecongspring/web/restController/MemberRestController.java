@@ -40,7 +40,7 @@ public class MemberRestController {
 		return memberService.findById(id);
 	}
 	
-	@GetMapping("/email/{id}")
+	@GetMapping("/email/{email}")
 	public Member findByEmail(@PathVariable("email") String email) {
 		return memberService.findByEmail(email);
 	}

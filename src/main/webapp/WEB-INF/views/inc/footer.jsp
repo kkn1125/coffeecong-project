@@ -1,3 +1,2 @@
 <app-footer
-:brand="brand"
-:menulist="menulist"></app-footer>
+:brand="brand"></app-footer>

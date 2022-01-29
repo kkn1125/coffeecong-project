@@ -5,8 +5,8 @@ export default {
         <div>
             <span class="h5">MD's PICK</span>
         </div>
-        <module-slide
-        :itemlist="itemlist"></module-slide>
+        <ModuleSlide
+        :itemlist="itemlist"/>
     </section>
     `
 }

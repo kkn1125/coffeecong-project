@@ -1,7 +1,7 @@
 import NavWrap from './nav/NavWrap.js';
 
 export default {
-    props: ['brand', 'menulist'],
+    props: ['brand'],
     data(){
         return {
             navClass: [
@@ -11,10 +11,8 @@ export default {
     },
     template: `
         <nav :class="navClass">
-            <component
-            is="navWrap"
-            :brand="brand"
-            :menus="menulist"></component>
+            <NavWrap
+            :brand="brand"/>
         </nav>
     `,
     components: {

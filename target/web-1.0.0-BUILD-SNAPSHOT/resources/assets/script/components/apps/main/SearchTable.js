@@ -148,14 +148,13 @@ export default {
         <div
         class="card-wrap"
         style="overflow: hidden;">
-            <module-card
+            <ModuleCard
             v-for="item in itemlistTemp"
             :data-link="item.category"
             :key="item.num"
             :item="item"
             :class="['card', item.pick?'':'hide', 'card-pd-3']"
-            :style="'width: calc((100% - 32px) / '+ cardCount+');'">
-            </module-card>
+            :style="'width: calc((100% - 32px) / '+ cardCount+');'"/>
         </div>
     </div>
     `

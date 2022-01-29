@@ -1,19 +1,10 @@
 export default {
-    props: ['menus'],
     data(){
         return {
-            templist: null,
+            menulist: [
+                'mall',
+            ],
             memberInfo: null,
-        }
-    },
-    created() {
-        this.memberInfo = sessionStorage['member']?JSON.parse(sessionStorage['member']):null;
-
-        if(this.memberInfo && this.memberInfo.active){
-            this.templist = [...this.menus.filter(x=>!x.match(/sign-/gm))];
-            this.templist.push('sign-out');
-        } else {
-            this.templist = [...this.menus];
         }
     },
     computed: {
@@ -43,11 +34,11 @@ export default {
     },
     template: `
     <ul id="gnbMenu" class="gnb-menu vgap-3 w-flex hide">
-        <li v-for="(item, idx) in templist" :key="idx">
+        <li v-for="(item, idx) in menulist" :key="idx">
             <a
             @click="signout"
             class="nav-link"
-            :href="'/'+(getLowerCase(item)=='signout'?'':getLowerCase(item))">
+            :href="'/'+getLowerCase(item)">
             {{getCapitalize(item)}}</a>
         </li>
         <li class="search btn-bundle g-0">

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.coffeecongspring</groupId>
+  <artifactId>web</artifactId>
+  <versioning>
+    <versions>
+      <version>1.0.0-BUILD-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20220129065643</lastUpdated>
+  </versioning>
+</metadata>

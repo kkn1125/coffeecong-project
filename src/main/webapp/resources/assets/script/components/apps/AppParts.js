@@ -3,11 +3,28 @@ import MallHead from './mall/MallHead.js';
 import MallContent from './mall/MallContent.js';
 import SignIn from './signin/SignIn.js';
 import SignUp from './signup/SignUp.js';
+import InfoUpdate from './setting/InfoUpdate.js'
+
+const AppSetting = {
+    data(){
+        return {
+
+        }
+    },
+    template: `
+        <main>
+            <InfoUpdate/>
+        </main>
+    `,
+    components: {
+        InfoUpdate,
+    }
+}
 
 const AppDetail = {
     template: `
         <main>
-            <detail-product></detail-product>
+            <DetailProduct/>
         </main>
     `,
     components: {
@@ -48,7 +65,6 @@ const AppMallSide = {
                     :key="li.id">
                         <a :href="'?type='+li.name">{{uppercase(li.name)}}</a>
                     </li>
-                    
                 </ul>
             </div>
         </div>
@@ -60,9 +76,9 @@ const AppMall = {
     template: `
         <main>
             <div class="py-5"></div>
-            <mall-head></mall-head>
+            <MallHead/>
             <div class="horizon-pad"></div>
-            <mall-content></mall-content>
+            <MallContent/>
             <div class="horizon-pad"></div>
         </main>
     `,
@@ -76,7 +92,7 @@ const AppSignIn = {
     template: `
         <main>
             <div class="py-5"></div>
-            <sign-in></sign-in>
+            <SignIn/>
             <div class="horizon-pad"></div>
         </main>
     `,
@@ -89,7 +105,7 @@ const AppSignUp = {
     template: `
     <main>
         <div class="py-5"></div>
-        <sign-up></sign-up>
+        <SignUp/>
         <div class="horizon-pad"></div>
     </main>
     `,
@@ -101,12 +117,13 @@ const AppSignUp = {
 const AppAbout = {
     template: `
     <div class="main">
-    AppAbout
+        AppAbout
     </div>
     `
 }
 
 export default {
+    AppSetting,
     AppDetail,
     AppMallSide,
     AppMall,

@@ -12,20 +12,16 @@ export default {
     },
     template: `
     <main>
-        <component
-        is="main-body-greet"></component>
+        <MainBodyGreet/>
         <div class="horizon-pad"></div>
-        <component
-        :recentItem="recentItem"
-        is="main-body-newitem"></component>
+        <MainBodyNewitem
+        :recentItem="recentItem"/>
         <div class="horizon-pad"></div>
-        <component
-        :itemlist="itemlist"
-        is="main-body-feature"></component>
+        <MainBodyFeature
+        :itemlist="itemlist"/>
         <div class="horizon-pad"></div>
-        <component
-        :itemlist="itemlist"
-        is="main-body-search"></component>
+        <MainBodySearch
+        :itemlist="itemlist"/>
         <div class="horizon-pad"></div>
     </main>
     `,

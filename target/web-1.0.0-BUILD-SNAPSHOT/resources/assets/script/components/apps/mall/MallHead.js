@@ -21,9 +21,9 @@ export default {
     },
     template: `
     <section class="fence-full fence-lg">
-        <module-item-view
+        <ModuleItemView
         :recentItem="recentItem"
-        :modules="'module-star'"></module-item-view>
+        :modules="'module-star'"/>
     </section>
     `,
 }

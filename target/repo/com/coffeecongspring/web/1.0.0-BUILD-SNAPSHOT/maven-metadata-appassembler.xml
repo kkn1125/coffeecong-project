@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>com.coffeecongspring</groupId>
+  <artifactId>web</artifactId>
+  <version>1.0.0-BUILD-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <localCopy>true</localCopy>
+    </snapshot>
+    <lastUpdated>20220129065643</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>war</extension>
+        <value>1.0.0-BUILD-SNAPSHOT</value>
+        <updated>20220129065643</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>
