@@ -38,10 +38,39 @@ new Vue({
             });
 
         const memberInfo = sessionStorage['member']?JSON.parse(sessionStorage['member']):null;
-        if(memberInfo&&memberInfo.expired - new Date().getTime()<0){
+
+        if(memberInfo){
+            try{
+                let valid = JSON.parse(memberInfo.token.unlock());
+                if(valid.num){
+                    axios({
+                        url:'/member/'+valid.num,
+                        method: 'get'
+                    })
+                    .then(data=>{
+                        if(data.data.id != memberInfo.id || data.data.email != memberInfo.email){
+                            alert('토큰이 유효하지 않습니다!');
+                            sessionStorage.removeItem('member');
+                            location = '/signin';
+                        }
+                    })
+                    .catch(e=>{
+                        alert('토큰이 유효하지 않습니다!');
+                        sessionStorage.removeItem('member');
+                        location = '/signin';
+                    });
+                }
+            } catch(e){
+                alert('토큰이 유효하지 않습니다!');
+                sessionStorage.removeItem('member');
+                location = '/signin';
+            }
+        }
+
+        if(memberInfo&&memberInfo.expired - new Date().getTime()<0 && memberInfo.active){
             memberInfo.active = false;
             sessionStorage['member'] = JSON.stringify(memberInfo);
-            location = '/?e=1'
+            if(!location.search.slice(1).match('e=')) location = '/?e=1';
         }
     },
     computed: {

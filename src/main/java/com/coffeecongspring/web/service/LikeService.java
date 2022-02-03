@@ -22,12 +22,12 @@ public class LikeService {
 		return likeMapper.findByNum(num).orElse(null);
 	}
 
-	public Like findByMemberNum(int mnum) {
-		return likeMapper.findByNum(mnum).orElse(null);
+	public List<Like> findByMemberNum(int mnum) {
+		return likeMapper.findByMemberNum(mnum);
 	}
 
-	public Like findByProductNum(int pnum) {
-		return likeMapper.findByProductNum(pnum).orElse(null);
+	public List<Like> findByProductNum(int pnum) {
+		return likeMapper.findByProductNum(pnum);
 	}
 
 	public Integer add(Like like) {

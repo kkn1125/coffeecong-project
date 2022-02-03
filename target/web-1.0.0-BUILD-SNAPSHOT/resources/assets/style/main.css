@@ -1,6 +1,9 @@
 @charset "UTF-8";
 ion-icon {
   pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 :root {

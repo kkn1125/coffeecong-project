@@ -32,7 +32,7 @@ export default{
         let validInfo = null;
 
         this.saveMode = memberInfo?.save??false;
-        if(memberInfo?.save){
+        if(memberInfo && memberInfo?.save){
             this.id = memberInfo.id;
             this.email = memberInfo.email;
             try{

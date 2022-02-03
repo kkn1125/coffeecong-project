@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.springframework</groupId>
+  <artifactId>springloaded</artifactId>
+  <versioning>
+    <release>1.2.8.RELEASE</release>
+    <versions>
+      <version>1.2.8.RELEASE</version>
+    </versions>
+    <lastUpdated>20220203035542</lastUpdated>
+  </versioning>
+</metadata>

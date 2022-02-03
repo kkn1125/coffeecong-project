@@ -58,7 +58,7 @@ Object.filter = (obj, predicate) =>
         .filter(key => predicate(obj[key]))
         .reduce((res, key) => (res[key] = obj[key], res), {});
 
-Vue.component('module-user-menu', {
+Vue.component('ModuleUserMenu', {
     data(){
         return {
             loggedIn: false,
@@ -118,7 +118,7 @@ Vue.component('module-user-menu', {
     },
     methods: {
         setModal(ev){
-            if(ev.target.closest('.user-modal-btn')) this.showModal = true;
+            if(ev.target.closest('.User-modal-btn')) this.showModal = true;
             else this.showModal = false;
         },
         signout(ev){
@@ -152,13 +152,13 @@ Vue.component('module-user-menu', {
     },
     template: `
         <div
-        :class="[ centerClass, badgeClass, fixed, 'user-modal-btn' ]"
+        :class="[ centerClass, badgeClass, fixed, 'User-modal-btn' ]"
         :style="[ fixStyle, fixSize, {cursor: 'pointer'} ]"
         >
             <ion-icon name="person-circle-outline"></ion-icon>
             <div
             v-if="showModal"
-            :class="[ fixed, roundBox, 'user-modal' ]"
+            :class="[ fixed, roundBox, 'User-modal' ]"
             :style="[ fixStyle, {width: '200px', cursor: 'auto'}, shadow ]">
                 <ul class="list-group fs-7">
                     <li
@@ -178,7 +178,7 @@ Vue.component('module-user-menu', {
     `
 })
 
-Vue.component('module-slide', {
+Vue.component('ModuleSlide', {
     props: ['itemlist', 'clickOff'],
     data(){
         return {
@@ -258,8 +258,8 @@ Vue.component('module-slide', {
             class="img-item"
             v-for="item in limitItemList">
                 <div class="info-box">
-                    <component :is="!clickOff?'module-star':''" :isSolid="true"></component>
-                    <component :is="!clickOff?'module-heart':''"></component>
+                    <component :is="!clickOff?'ModuleStar':''" :isSolid="true"></component>
+                    <component :is="!clickOff?'ModuleHeart':''"></component>
                 </div>
                 <img
                 style="height: 100%; object-fit: cover;"
@@ -276,7 +276,7 @@ Vue.component('module-slide', {
     `
 })
 
-Vue.component('module-review', {
+Vue.component('ModuleReview', {
     props: ['num'],
     data(){
         return{
@@ -296,11 +296,13 @@ Vue.component('module-review', {
                         <span class="text-warning">({{view}})</span>
                     </div>
                     <div>
-                        <module-line-star></module-line-star>
+                        <ModuleLineStar></ModuleLineStar>
                     </div>
                 </div>
                 <div class="w-flex align-items-center vgap-3">
-                    <span>camera</span>
+                    <button class="btn btn-success">
+                        <ion-icon name="camera-outline"></ion-icon>
+                    </button>
                     <button class="btn btn-info">등록</button>
                 </div>
             </div>
@@ -313,32 +315,32 @@ Vue.component('module-review', {
             </div>
         </div>
         <div class="horizon-pad"></div>
-        <comment-wrap
-        num="num"></comment-wrap>
+        <CommentWrap
+        :num="num"></CommentWrap>
     </div>
     `
 })
 
-Vue.component('comment-wrap', {
+Vue.component('CommentWrap', {
     props: ['num'],
     data(){
         return {
             reviews: [],
         }
     },
-    beforeUpdate() {
+    mounted() {
         axios({
             method: 'get',
-            url: `/comment/pnum${num}`
+            url: `/comment/pnum/${this.num}`
         }).then(response=>this.reviews = response.data)
         .catch(e=>console.log(e));
     },
     template: `
         <div class="w-flex flex-column hgap-3">
-            <module-comment
+            <ModuleComment
             v-for="(item, idx) in 3"
             :item="item"
-            :key="idx"></module-comment>
+            :key="idx"></ModuleComment>
             <div
             v-if="reviews.length==0"
             class="notice notice-danger">
@@ -348,7 +350,7 @@ Vue.component('comment-wrap', {
     `
 })
 
-Vue.component('module-comment',{
+Vue.component('ModuleComment',{
     props: ['item'],
     template: `
         <div class="w-flex flex-column border border-light p-3 rounded-3">
@@ -367,9 +369,9 @@ Vue.component('module-comment',{
                     </div>
                 </div>
                 <div class="w-flex flex-column align-items-end">
-                    <module-line-star
+                    <ModuleLineStar
                     :blockStar="true"
-                    :startPoint="item.star"></module-line-star>
+                    :startPoint="item.star"></ModuleLineStar>
                     <div>
                         <span>
                             <button class="btn btn-success">수정</button>
@@ -396,15 +398,14 @@ Vue.component('module-comment',{
     `
 })
 
-Vue.component('order-view', {
+Vue.component('OrderView', {
     props: ['item'],
     data(){
         return {
             images: [],
+            capacity: 0,
+            selected: '',
         }
-    },
-    beforeUpdate() {
-        this.images.push({image: this.item.image});
     },
     watch: {
         item: function (){
@@ -413,19 +414,28 @@ Vue.component('order-view', {
                 url: '/productimg/pnum/'+this.item.num
             }).then(response=>{
                 this.images.concat(response.data);
+                this.images.push({image: this.item.image});
+                console.log(this.images)
             }).catch(e=>console.log(e));
         }
     },
     computed: {
         getItem(){
+            console.log(this.item)
             return this.item??false;
         },
         getContent(){
             const items = this.item??false;
-            return new DOMParser().parseFromString(items.content, 'text/html').body.textContent;
+            return new DOMParser().parseFromString(items.content, 'text/html').body.textContent.trim()||'Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias, facilis dolorum ratione ab voluptatum odio illo.';
         },
         getImages(){
             return this.images;
+        },
+        getPrice(){
+            return this.getItem.price?.toLocaleString();
+        },
+        getSumPrice(){
+            return (this.getItem.price * this.capacity).toLocaleString();
         }
     },
     template: `
@@ -436,14 +446,14 @@ Vue.component('order-view', {
                 class="w-100"
                 :src="getItem.image"
                 alt="image">
-                <module-slide
+                <ModuleSlide
                 :clickOff="true"
-                :itemlist="getImages"></module-slide>
+                :itemlist="getImages"></ModuleSlide>
             </div>
             <div class="col">
                 <div class="mb-3">
                     <span class="h4">{{getItem.title}}</span>
-                    <module-heart></module-heart>
+                    <ModuleHeart></ModuleHeart>
                 </div>
                 <div v-html="getContent"></div>
                 <div
@@ -452,28 +462,45 @@ Vue.component('order-view', {
                         <span class="col">상품 종류</span>
                         <span class="col">
                             <select
-                            class="form-select w-100"
-                            name="">
-                                <option :value="getItem.name">{{getItem.name}}</option>
+                            v-model="selected"
+                            class="form-select w-100 text-center"
+                            name="category">
+                                <option value="">---선택해주세요---</option>
+                                <option
+                                :value="getItem.title">{{getItem.title}}</option>
                             </select>
                         </span>
                     </div>
                     <div class="w-flex justify-content-between align-items-center vgap-2">
                         <span class="col">상품 수량</span>
-                        <span class="col">
+                        <span class="col w-flex justify-content-between">
+                            <span>{{getPrice}}</span>
                             <input
-                            class="form-input w-100"
-                            type="text"
+                            class="form-input w-50"
+                            type="number"
+                            v-model="capacity"
+                            min="0"
+                            :max="getItem.capacity"
                             pattern="[0-9]+">
                         </span>
                     </div>
+                    <div class="w-flex justify-content-between align-items-center vgap-2">
+                        <span class="col">합계</span>
+                        <span class="col text-end fw-bold">
+                            <span>{{getSumPrice}} 원</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="btn-bundle justify-content-end">
+                    <button class="btn btn-danger px-3">찜하기</button>
+                    <button class="btn btn-info px-3">장바구니</button>
                 </div>
             </div>
         </div>
     `
 })
 
-Vue.component('module-input-id', {
+Vue.component('ModuleInputId', {
     props: ['id'],
     computed: {
         idValue: {
@@ -503,7 +530,7 @@ Vue.component('module-input-id', {
     `
 });
 
-Vue.component('module-input-email', {
+Vue.component('ModuleInputEmail', {
     props: ['email'],
     computed: {
         emailValue: {
@@ -532,7 +559,7 @@ Vue.component('module-input-email', {
     `
 });
 
-Vue.component('module-breadcrumb', {
+Vue.component('ModuleBreadcrumb', {
     props: ['orders', 'current'],
     data(){
         return {
@@ -549,7 +576,7 @@ Vue.component('module-breadcrumb', {
     `
 })
 
-Vue.component('module-signup', {
+Vue.component('ModuleSignup', {
     props: ['orders', 'showPass'],
     data(){
         return {
@@ -616,7 +643,7 @@ Vue.component('module-signup', {
     `
 });
 
-Vue.component('module-input-password', {
+Vue.component('ModuleInputPassword', {
     props: ['showPass'],
     template: `
         <div class="position-relative w-100">
@@ -634,7 +661,7 @@ Vue.component('module-input-password', {
     `
 });
 
-Vue.component('module-item-view', {
+Vue.component('ModuleItemView', {
     props: ['modules', 'blockStar', 'starPoint', 'recentItem'],
     data(){
         return {
@@ -686,7 +713,7 @@ Vue.component('module-item-view', {
                 <component
                 :starPoint="starPoint"
                 :blockStar="blockStar?true:false"
-                :is="modules??'module-line-star'"></component>
+                :is="modules??'ModuleLineStar'"></component>
             </div>
             <div class="hr"></div>
             <div>
@@ -718,7 +745,7 @@ Vue.component('module-item-view', {
     `
 });
 
-Vue.component('module-list', {
+Vue.component('ModuleList', {
     props: ['item', 'isPrice'],
     computed: {
         autoComma(){
@@ -750,8 +777,8 @@ Vue.component('module-list', {
                     </span>
                     <span class="w-inline-flex justify-content-start align-items-center vgap-3">
                         <span v-if="!isPrice">
-                            <module-star :isSolid="true"></module-star>
-                            <module-heart></module-heart>
+                            <ModuleStar :isSolid="true"></ModuleStar>
+                            <ModuleHeart></ModuleHeart>
                         </span>
                         <span v-else>
                             price {{autoComma}}
@@ -764,7 +791,7 @@ Vue.component('module-list', {
     `
 });
 
-Vue.component('module-group-list', {
+Vue.component('ModuleGroupList', {
     template: `
         <ul>
             <slot></slot>
@@ -772,7 +799,7 @@ Vue.component('module-group-list', {
     `
 });
 
-Vue.component('module-group-card', {
+Vue.component('ModuleGroupCard', {
     template: `
         <div class="">
             <slot></slot>
@@ -780,7 +807,7 @@ Vue.component('module-group-card', {
     `
 });
 
-Vue.component('module-card', {
+Vue.component('ModuleCard', {
     props: ['item', 'isPrice'],
     computed: {
         autoComma(){
@@ -822,8 +849,8 @@ Vue.component('module-card', {
 
             <div class="w-flex justify-content-between vgap-1">
                 <div v-if="!isPrice">
-                    <module-star :isSolid="true"></module-star>
-                    <module-heart></module-heart>
+                    <ModuleStar :isSolid="true"></ModuleStar>
+                    <ModuleHeart></ModuleHeart>
                 </div>
                 <div v-else>
                     price {{autoComma}}
@@ -834,7 +861,7 @@ Vue.component('module-card', {
     `
 });
 
-Vue.component('module-line-star', {
+Vue.component('ModuleLineStar', {
     props: ['blockStar', 'starPoint'],
     data(){
         return{
@@ -907,7 +934,7 @@ Vue.component('module-line-star', {
     `
 });
 
-Vue.component('module-star', {
+Vue.component('ModuleStar', {
     data(){
         return {
             isSolid: false,
@@ -926,7 +953,7 @@ Vue.component('module-star', {
     `
 });
 
-Vue.component('module-heart', {
+Vue.component('ModuleHeart', {
     data(){
         return {
             isSolid: false,

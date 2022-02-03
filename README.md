@@ -143,7 +143,91 @@ Java JSP 1개월 반 과정의 학원을 이수하고 마지막 2주 가량 남�
 
 ### API 명세서
 
-... 작성 중
+#### 메인 페이지
+
+**Product**
+> 상품 셀렉터, md pick's영역
+
+- 상품 리스트 조회
+    `GET` /product
+
+**ProductTag**
+> 뉴 아이템
+
+- 상품 태그 조회
+    `GET` /producttag/pnum/{pnum}
+
+**Like**
+> 상품 카드별 좋아요 버튼 클릭 시
+
+- 찜 등록
+    `POST` /like
+- 찜 취소
+    `DELETE` /like
+
+#### 온라인 몰
+
+**Product**
+> 메뉴 리스트 상품 타입 클릭 시 (default-type : "bean")
+
+- 상품 리스트 조회
+    `GET` /product
+- 상품 카테고리별 리스트 조회
+    `GET` /product/category/{type}
+
+**ProductTag**
+> 대표 상품 태그
+
+- 상품 태그 조회
+    `GET` /producttag/pnum/{pnum}
+
+#### 상세페이지
+
+**Product**
+> 상세페이지 상단
+
+- 상품 조회
+    `GET` /product/{num}
+
+**ProductTag**
+> 상품 태그
+
+- 상품 태그 조회
+    `GET` /producttag/pnum/{pnum}
+
+**ProductImg**
+> 상품 이미지
+
+- 상품 등록 이미지 조회
+    `GET` /produtimg/pnum/{pnum}
+
+**Comment**
+> 상세페이지 하단
+
+- 리뷰 조회
+    `GET` /comment/pnum/{pnum}
+- 리뷰 등록
+    `POST` /comment
+- 리뷰 수정
+    `PUT` /comment/{cnum}
+- 리뷰 삭제
+    `DELETE` /comment/{cnum}
+
+**Cart**
+> 장바구니 버튼 클릭 시
+
+- 카트 등록
+    `POST` /cart
+
+**Like**
+> 찜하기 버튼 클릭 시
+
+- 찜 등록
+    `POST` /like
+- 찜 취소
+    `DELETE` /like
+
+... 작성중 ...
 
 ## 포트폴리오 샘플
 
