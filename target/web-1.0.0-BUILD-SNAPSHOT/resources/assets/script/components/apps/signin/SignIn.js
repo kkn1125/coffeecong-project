@@ -31,8 +31,12 @@ export default{
         const memberInfo = sessionStorage['member']?JSON.parse(sessionStorage['member']):null;
         let validInfo = null;
 
+        if(memberInfo?.active){
+            location = '/';
+        }
+
         this.saveMode = memberInfo?.save??false;
-        if(memberInfo?.save){
+        if(memberInfo && memberInfo?.save){
             this.id = memberInfo.id;
             this.email = memberInfo.email;
             try{

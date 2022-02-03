@@ -2,7 +2,7 @@ export default {
     data(){
         return {
             product: null,
-            pnum: 0,
+            pnum: null,
         }
     },
     created() {

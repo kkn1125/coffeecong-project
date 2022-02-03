@@ -3,6 +3,12 @@
  */
 'use strict';
 
+Object.toCapitalize = function(string){
+    return string.replace(/[\w]+/gm, (str)=>{
+        return str.charAt(0).toUpperCase()+str.slice(1);
+    });
+}
+
 Object.defineProperty(Object.prototype, 'insertPad', {
     /**Object.defineProperty(Object.__proto__, 'insertPad', {
     /**
@@ -67,7 +73,7 @@ Vue.component('ModuleUserMenu', {
                 boxShadow: '0 0 1rem 0 rgba(0,0,0,0.15)',
             },
             centerClass: 'w-flex align-items-center justify-content-center',
-            badgeClass: 'rounded-circle bg-info text-white fs-1',
+            badgeClass: 'rounded-circle bg-info text-white',
             fixed: 'position-fixed',
             roundBox: 'rounded-3 text-muted fw-bold bg-white',
             fixStyle: {
@@ -126,6 +132,7 @@ Vue.component('ModuleUserMenu', {
             if(target.getAttribute('href') == '/'){
                 ev.preventDefault();
                 this.memberInfo.active = false;
+                this.memberInfo.token = '';
                 sessionStorage['member'] = JSON.stringify(this.memberInfo);
                 location = '/?e=2'
             }
@@ -155,7 +162,7 @@ Vue.component('ModuleUserMenu', {
         :class="[ centerClass, badgeClass, fixed, 'User-modal-btn' ]"
         :style="[ fixStyle, fixSize, {cursor: 'pointer'} ]"
         >
-            <ion-icon name="person-circle-outline"></ion-icon>
+            <ion-icon class="fs-1" name="person-circle-outline"></ion-icon>
             <div
             v-if="showModal"
             :class="[ fixed, roundBox, 'User-modal' ]"
@@ -250,7 +257,9 @@ Vue.component('ModuleSlide', {
         <div
         @mousedown="prevMove"
         class="arrow-left h2 text-muted">
-            <ion-icon name="caret-back-outline"></ion-icon>
+            <ion-icon
+            class="fs-3"
+            name="caret-back-outline"></ion-icon>
         </div>
         <div class="img-slide mx-5 col">
             <div
@@ -258,11 +267,16 @@ Vue.component('ModuleSlide', {
             class="img-item"
             v-for="item in limitItemList">
                 <div class="info-box">
-                    <component :is="!clickOff?'ModuleStar':''" :isSolid="true"></component>
-                    <component :is="!clickOff?'ModuleHeart':''"></component>
+                    <component
+                    :is="false?'ModuleStar':''"
+                    :isSolid="true"></component>
+                    <component
+                    :is="false?'ModuleHeart':''"
+                    :pnum="item.num"></component>
                 </div>
                 <img
-                style="height: 100%; object-fit: cover;"
+                @click="!clickOff?this.location = '/mall/'+item.num:''"
+                style="height: 100%; object-fit: cover; cursor: pointer;"
                 :src="item.image"
                 alt="sample">
             </div>
@@ -270,7 +284,9 @@ Vue.component('ModuleSlide', {
         <div
         @mousedown="nextMove"
         class="arrow-right h2 text-muted">
-            <ion-icon name="caret-forward-outline"></ion-icon>
+            <ion-icon
+            class="fs-3"
+            name="caret-forward-outline"></ion-icon>
         </div>
     </div>
     `
@@ -282,11 +298,63 @@ Vue.component('ModuleReview', {
         return{
             view: 3,
             isSolid: true,
+            star: 0,
+            member: null,
         }
+    },
+    created() {
+        if(sessionStorage['member']){
+            this.member = JSON.parse(JSON.parse(sessionStorage['member']).token.unlock());
+        }
+    },
+    computed: {
+        getNum(){
+            return this.num;
+        }
+    },
+    methods: {
+        addComment(ev){
+            const form = ev.target;
+            let formData = new FormData();
+
+            formData.append('file', form.img_path.files[0]);
+            formData.append('content', form.content.value);
+            formData.append('star', this.star);
+            formData.append('mnum', this.member.num);
+            formData.append('pnum', this.num);
+            formData.append('cid', 0);
+            formData.append('layer', 0);
+            formData.append('group', 0);
+            console.log(formData)
+            axios.post('/comment',formData,{
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+                // params: {
+                //     file: form.img_path.files[0],
+                //     content: form.content.value,
+                //     star: this.star,
+                //     mnum: this.member.num,
+                //     pnum: this.num,
+                //     cid: 0,
+                //     layer: 0,
+                //     group: 0,
+                // }
+            })
+            .then(data=>{
+                console.log(data)
+            }).catch(e=>console.log(e))
+        },
+        getValue(a){
+            this.star = a;
+        },
     },
     template: `
     <div class="w-flex flex-column">
-        <div class="w-flex flex-column hgap-3">
+        <form
+        name="comment_add"
+        @submit.prevent="addComment"
+        class="w-flex flex-column hgap-3">
             <div
             class="w-flex justify-content-between">
                 <div
@@ -296,14 +364,23 @@ Vue.component('ModuleReview', {
                         <span class="text-warning">({{view}})</span>
                     </div>
                     <div>
-                        <ModuleLineStar></ModuleLineStar>
+                        <ModuleLineStar
+                        @sendValue="getValue"
+                        ></ModuleLineStar>
                     </div>
                 </div>
                 <div class="w-flex align-items-center vgap-3">
-                    <button class="btn btn-success">
+                    <input
+                    style="pointer-events: none; opacity: 0; position: fixed; right: -9999px;"
+                    name="img_path" type="file">
+                    <button
+                    onclick="img_path.click()"
+                    class="btn btn-success"
+                    type="button">
                         <ion-icon name="camera-outline"></ion-icon>
                     </button>
-                    <button class="btn btn-info">등록</button>
+                    <button
+                    class="btn btn-info">등록</button>
                 </div>
             </div>
             <div>
@@ -313,10 +390,10 @@ Vue.component('ModuleReview', {
                 class="form-input w-100"
                 style="resize: vertical;"></textarea>
             </div>
-        </div>
+        </form>
         <div class="horizon-pad"></div>
         <CommentWrap
-        :num="num"></CommentWrap>
+        :num="getNum"></CommentWrap>
     </div>
     `
 })
@@ -328,21 +405,27 @@ Vue.component('CommentWrap', {
             reviews: [],
         }
     },
-    mounted() {
-        axios({
-            method: 'get',
-            url: `/comment/pnum/${this.num}`
-        }).then(response=>this.reviews = response.data)
-        .catch(e=>console.log(e));
+    watch: {
+        num: function (value){
+            axios({
+                url: '/comment/pnum/'+value,
+                method: 'get'
+            }).then(data=>this.reviews = data.data);
+        }
+    },
+    computed: {
+        getReviews(){
+            return this.reviews;
+        }
     },
     template: `
         <div class="w-flex flex-column hgap-3">
             <ModuleComment
-            v-for="(item, idx) in 3"
+            v-for="(item, idx) in getReviews"
             :item="item"
             :key="idx"></ModuleComment>
             <div
-            v-if="reviews.length==0"
+            v-if="getReviews.length==0"
             class="notice notice-danger">
                 등록된 리뷰가 없습니다.
             </div>
@@ -352,26 +435,52 @@ Vue.component('CommentWrap', {
 
 Vue.component('ModuleComment',{
     props: ['item'],
+    data(){
+        return {
+            member: null,
+        }
+    },
+    created() {
+        axios({
+            url:'/member/'+this.item.mnum,
+            method: 'get'
+        }).then(data=>{
+            this.member = data.data;
+        })
+    },
+    computed: {
+        getItem(){
+            return this.item??false;
+        },
+        getMember(){
+            return this.member??false;
+        },
+        convertLocaleTime(){
+            return new Date(this.getItem.regdate).toLocaleString().slice(0, -3);
+        }
+    },
     template: `
         <div class="w-flex flex-column border border-light p-3 rounded-3">
             <div class="w-flex justify-content-between align-items-center mb-3">
                 <div class="w-flex align-items-center hgap-3">
                     <div>
-                        <img src="" alt="">
+                        <ion-icon
+                        class="h3 text-muted"
+                        name="person-circle-outline"></ion-icon>
                     </div>
                     <div class="w-flex flex-column align-items-start">
                         <div>
-                            name
+                            {{getMember.name}}
                         </div>
-                        <div>
-                            time
+                        <div class="text-muted fs-7">
+                            {{convertLocaleTime}}
                         </div>
                     </div>
                 </div>
                 <div class="w-flex flex-column align-items-end">
                     <ModuleLineStar
                     :blockStar="true"
-                    :startPoint="item.star"></ModuleLineStar>
+                    :starPoint="getItem.star"></ModuleLineStar>
                     <div>
                         <span>
                             <button class="btn btn-success">수정</button>
@@ -384,7 +493,12 @@ Vue.component('ModuleComment',{
             </div>
             <div>
                 <p class="mb-3">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aliquid laborum sint praesentium vel vero quidem assumenda velit. Impedit, veniam ipsam. Totam cupiditate quisquam non blanditiis quos maxime minus deleniti repudiandae.
+                <img
+                style="max-width: 250px;"
+                v-if="getItem.img_path!=''"
+                :src="getItem.img_path"
+                alt="sample">
+                {{getItem.content}}
                 </p>
                 <span>
                     <span
@@ -415,13 +529,11 @@ Vue.component('OrderView', {
             }).then(response=>{
                 this.images.concat(response.data);
                 this.images.push({image: this.item.image});
-                console.log(this.images)
             }).catch(e=>console.log(e));
         }
     },
     computed: {
         getItem(){
-            console.log(this.item)
             return this.item??false;
         },
         getContent(){
@@ -453,7 +565,8 @@ Vue.component('OrderView', {
             <div class="col">
                 <div class="mb-3">
                     <span class="h4">{{getItem.title}}</span>
-                    <ModuleHeart></ModuleHeart>
+                    <ModuleHeart
+                    :pnum="getItem.num"></ModuleHeart>
                 </div>
                 <div v-html="getContent"></div>
                 <div
@@ -491,8 +604,7 @@ Vue.component('OrderView', {
                         </span>
                     </div>
                 </div>
-                <div class="btn-bundle justify-content-end">
-                    <button class="btn btn-danger px-3">찜하기</button>
+                <div class="text-end">
                     <button class="btn btn-info px-3">장바구니</button>
                 </div>
             </div>
@@ -778,7 +890,8 @@ Vue.component('ModuleList', {
                     <span class="w-inline-flex justify-content-start align-items-center vgap-3">
                         <span v-if="!isPrice">
                             <ModuleStar :isSolid="true"></ModuleStar>
-                            <ModuleHeart></ModuleHeart>
+                            <ModuleHeart
+                            :pnum="item.num"></ModuleHeart>
                         </span>
                         <span v-else>
                             price {{autoComma}}
@@ -849,8 +962,9 @@ Vue.component('ModuleCard', {
 
             <div class="w-flex justify-content-between vgap-1">
                 <div v-if="!isPrice">
-                    <ModuleStar :isSolid="true"></ModuleStar>
-                    <ModuleHeart></ModuleHeart>
+                    <ModuleStar v-if="false" :isSolid="true"></ModuleStar>
+                    <ModuleHeart
+                    :pnum="item.num"></ModuleHeart>
                 </div>
                 <div v-else>
                     price {{autoComma}}
@@ -911,18 +1025,22 @@ Vue.component('ModuleLineStar', {
                     break;
                 }
             }
+
+            this.$emit('sendValue', this.star.filter(s=>s.isFill).length);
         })
-        else {
-            let loop = this.starPoint??3; // default 3
-            for(let i=0; i<loop; i++){
+    },
+    computed: {
+        getStarLine(){
+            for(let i=0; i<this.starPoint??3; i++){
                 this.star[i].isFill = true;
             }
+            return this.star;
         }
     },
     template: `
     <span class="text-warning">
         <span
-        v-for="(s,i) in star"
+        v-for="(s,i) in getStarLine"
         :key="i">
             <label
             :for="'star-'+i">
@@ -954,20 +1072,80 @@ Vue.component('ModuleStar', {
 });
 
 Vue.component('ModuleHeart', {
+    props: ['pnum'],
     data(){
         return {
             isSolid: false,
+            member: null,
+            total: 0,
+            like: null,
+        }
+    },
+    created() {
+        if(sessionStorage['member']){
+            let token = JSON.parse(sessionStorage['member']).token;
+            if(token){
+                this.member = JSON.parse(token.unlock());
+            }
+        }
+        if(this.member){
+            axios({
+                url:'/like/mnum/'+this.member.num,
+                method: 'get'
+            }).then(data=>{
+                if(data.data.filter(x=>x.pnum==this.pnum).length>0){
+                    this.isSolid = true;
+                }
+            })
+        }
+    },
+    watch: {
+        pnum: function (){
+            axios({
+                url:'/like/pnum/'+this.pnum,
+                method: 'get'
+            }).then(data=>{
+                this.total = data.data.length;
+                this.like = data.data;
+            }).catch(e=>{
+                this.total = 0;
+            })
         }
     },
     methods: {
         changeColor(){
-            this.isSolid = !this.isSolid;
+            if(this.member && this.pnum){
+                this.isSolid = !this.isSolid;
+                if(this.isSolid){
+                    this.total += 1;
+                    axios({
+                        url: `/like`,
+                        method: 'post',
+                        params: {
+                            mnum: this.member.num,
+                            pnum: this.pnum,
+                        }
+                    });
+                } else {
+                    this.total -= 1;
+                    let likes = this.like.filter(l=>l.mnum==this.member.num).pop();
+                    axios({
+                        url: `/like/${likes.num}`,
+                        method: 'delete',
+                        params: {
+                            _method: 'delete',
+                        }
+                    });
+                }
+            } else {
+                alert('로그인하셔야합니다.');
+            }
         }
     },
     template: `
     <span class="like fs-5">
         <span @click="changeColor"><ion-icon :name="'heart'+(isSolid?'':'-outline')"></ion-icon></span>
-        <span>3</span>
+        <span>{{total}}</span>
     </span>
     `
 });

@@ -29,7 +29,7 @@ public interface CommentMapper {
 	List<Comment> findByMemberNum(@Param("mnum") int mnum);
 
 //	insert
-	@Insert("INSERT INTO comment (mnum, pnum, content, img_path, star, cid, layer, group) VALUES (#{comment.mnum}, #{comment.pnum}, #{comment.content}, #{comment.img_path}, #{comment.star}, #{comment.cid}, #{comment.layer}, #{comment.group})")
+	@Insert("INSERT INTO comment (mnum, pnum, content, img_path, star, cid, layer, `group`) VALUES (#{comment.mnum}, #{comment.pnum}, #{comment.content}, #{comment.img_path}, #{comment.star}, #{comment.cid}, #{comment.layer}, #{comment.group})")
 	@Options(useGeneratedKeys = true, keyColumn = "num")
 	void add(@Param("comment") Comment comment);
 

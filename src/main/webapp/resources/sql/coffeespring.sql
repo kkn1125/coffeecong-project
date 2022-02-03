@@ -269,11 +269,13 @@ INSERT INTO product (pid, pname, title, subtitle, content, capacity, price, cate
 '/resources/assets/images/P0010C.jpg');
 
 select * from product where category like CONCAT('%', 'c', '%');
-
+select * from `like` where mnum=1;
 desc product;
 desc member;
 show tables;
 
+INSERT INTO comment (mnum, pnum, content, img_path, star, cid, layer, 'group') VALUES (1, 1, 'content', 'path', 4.5, 0, 0, 0);
+
 desc comment;
 
-select * from member;
+select * from comment;

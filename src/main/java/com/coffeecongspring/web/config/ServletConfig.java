@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -55,5 +57,14 @@ public class ServletConfig implements WebMvcConfigurer
 		tilesViewResolver.setViewClass(TilesView.class);
 		tilesViewResolver.setOrder(1);
 		return tilesViewResolver;
+	}
+	
+	@Bean
+	public MultipartResolver multipartResolver() throws Exception{
+		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+		multipartResolver.setMaxUploadSize(2000000000);
+		multipartResolver.setDefaultEncoding("UTF-8");
+		System.out.println(multipartResolver.toString());
+		return multipartResolver;
 	}
 }

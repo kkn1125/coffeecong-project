@@ -40,6 +40,7 @@ new Vue({
         const memberInfo = sessionStorage['member']?JSON.parse(sessionStorage['member']):null;
 
         if(memberInfo){
+            if(memberInfo.token.trim()=='')return;
             try{
                 let valid = JSON.parse(memberInfo.token.unlock());
                 if(valid.num){
